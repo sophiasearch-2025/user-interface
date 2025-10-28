@@ -1,0 +1,34 @@
+@import url("https://fonts.googleapis.com/css2?family=Mukta+Vaani:wght@400;500;600;700&display=swap");
+@import "tailwindcss";
+
+:root {
+    --background: #1d1d1b;
+    --foreground: #1d1d1b;
+}
+
+@theme inline {
+    --color-brand-dark: #1d1d1b;
+
+    --color-btn-primary-bg: #532ece;
+
+    --color-link-active: #37bde9;
+    --color-link-hover: #f2f2f2;
+
+    --color-background: var(--background);
+    --color-foreground: var(--foreground);
+
+    --font-family-sans: var(--font-mukta);
+    --font-family-mono: var(--font-geist-mono);
+}
+
+@media (prefers-color-scheme: dark) {
+    :root {
+        --background: #1d1d1b;
+        --foreground: #ededed;
+    }
+}
+
+body {
+    background: var(--background);
+    color: var(--foreground);
+}
