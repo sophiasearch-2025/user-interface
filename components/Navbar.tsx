@@ -17,7 +17,7 @@ export default async function Navbar() {
     <nav className="w-full">
       <div className="flex justify-between items-center mx-auto px-8 py-4">
         <div className="flex items-center gap-8">
-          <Image src="/sophia_dark_bg.png" width={283} alt="Logo" height={90} />
+          <Image src="/sophia_dark_bg.png" width={220} alt="Logo" height={70} />
 
           <a href="#" className="font-bold text-link-active hover:text-link-hover transition-colors">
             Catálogo
