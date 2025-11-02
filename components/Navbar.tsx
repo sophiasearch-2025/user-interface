@@ -1,6 +1,18 @@
 import Image from "next/image";
+import UserProfileMenu from "./UserProfileMenu";
 
-export default function Navbar() {
+async function fetchUserData() {
+  return {
+    name: "Usuario",
+    role: "Rol del usuario",
+    initial: "U",
+  };
+}
+
+export default async function Navbar() {
+  const userData = await fetchUserData();
+  const isAuthenticated = !!userData;
+
   return (
     <nav className="w-full">
       <div className="flex justify-between items-center mx-auto px-8 py-4">
@@ -15,18 +27,22 @@ export default function Navbar() {
           </a>
         </div>
 
-        <div className="flex items-center gap-8">
-          <a
-            href="#"
-            className="font-bold bg-btn-primary-bg text-link-hover hover:bg-link-hover hover:text-btn-primary-bg border border-transparent hover:border-btn-primary-bg px-5 py-2 rounded-full transition-all"
-          >
-            Registrarse
-          </a>
+        {isAuthenticated ? (
+          <UserProfileMenu userName={userData.name} userRole={userData.role} userInitial={userData.initial} />
+        ) : (
+          <div className="flex items-center gap-8">
+            <a
+              href="#"
+              className="font-bold bg-btn-primary-bg text-link-hover hover:bg-link-hover hover:text-btn-primary-bg border border-transparent hover:border-btn-primary-bg px-5 py-2 rounded-full transition-all"
+            >
+              Registrarse
+            </a>
 
-          <a href="#" className="font-bold text-link-active hover:text-link-hover transition-colors">
-            Iniciar sesión
-          </a>
-        </div>
+            <a href="#" className="font-bold text-link-active hover:text-link-hover transition-colors">
+              Iniciar sesión
+            </a>
+          </div>
+        )}
       </div>
     </nav>
   );

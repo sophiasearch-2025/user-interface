@@ -8,8 +8,13 @@
 
 @theme inline {
     --color-brand-dark: #1d1d1b;
+    --color-brand-red: #ff6164;
+    --color-brand-light: #f2f2f2;
 
     --color-btn-primary-bg: #532ece;
+    --color-btn-secondary-bg: #37bde9;
+
+    --color-btn-primary-hover-bg: #f2f2f2;
 
     --color-link-active: #37bde9;
     --color-link-hover: #f2f2f2;
