@@ -2,25 +2,78 @@
 @import "tailwindcss";
 
 :root {
-    --background: #1d1d1b;
-    --foreground: #1d1d1b;
+    /* -- Primarios -- */
+    --palette-purple: #532ece;
+    --palette-cyan: #44cfe2;
+    --palette-black: #1d1d1b;
+    --palette-grey: #818181;
+
+    /* -- Secundarios -- */
+    --palette-green: #46c5a5;
+    --palette-red: #ff6164;
+    --palette-white: #f2f2f2;
+    --palette-yellow: #ffc500;
+    --palette-blue-dark: #2a3176;
+
+    /* Fondos (Backgrounds) */
+    --color-background: var(--palette-black);
+    --color-foreground: var(--palette-white);
+    --color-surface: var(--palette-purple);
+
+    /* Texto (Foregrounds) */
+    --color-text-primary: var(--palette-white);
+    --color-text-secondary: var(--palette-cyan);
+    --color-text-muted: var(--palette-grey);
+    --color-text-danger: var(--palette-red);
+
+    /* Botones (Buttons) */
+    --color-btn-primary-bg: var(--palette-purple);
+    --color-btn-primary-hover-bg: var(--palette-white);
+    --color-btn-primary-hover-text: var(--palette-purple);
+
+    --color-btn-secondary-bg: var(--palette-cyan);
+
+    /* Links */
+    --color-link-active: var(--palette-cyan);
+    --color-link-hover: var(--palette-white);
+
+    /* Acentos y Bordes */
+    --color-border-primary: var(--palette-cyan);
+    --color-accent-red: var(--palette-red);
+    --color-accent-yellow: var(--palette-yellow);
+    --color-accent-green: var(--palette-green);
+
+    --background: var(--color-background);
+    --foreground: var(--color-foreground);
 }
 
 @theme inline {
-    --color-brand-dark: #1d1d1b;
-    --color-brand-red: #ff6164;
-    --color-brand-light: #f2f2f2;
+    /* Fondos */
+    --color-background: var(--color-background);
+    --color-surface: var(--color-surface);
 
-    --color-btn-primary-bg: #532ece;
-    --color-btn-secondary-bg: #37bde9;
+    /* Texto */
+    --color-foreground: var(--color-foreground);
+    --color-text-primary: var(--color-text-primary);
+    --color-text-secondary: var(--color-text-secondary);
+    --color-text-muted: var(--color-text-muted);
+    --color-text-danger: var(--color-text-danger);
 
-    --color-btn-primary-hover-bg: #f2f2f2;
+    /* Botones */
+    --color-btn-primary-bg: var(--color-btn-primary-bg);
+    --color-btn-primary-hover-bg: var(--color-btn-primary-hover-bg);
+    --color-btn-primary-hover-text: var(--color-btn-primary-hover-text);
+    --color-btn-secondary-bg: var(--color-btn-secondary-bg);
 
-    --color-link-active: #37bde9;
-    --color-link-hover: #f2f2f2;
+    /* Links */
+    --color-link-active: var(--color-link-active);
+    --color-link-hover: var(--color-link-hover);
 
-    --color-background: var(--background);
-    --color-foreground: var(--foreground);
+    /* Acentos y Bordes */
+    --color-border-primary: var(--color-border-primary);
+    --color-accent-red: var(--color-accent-red);
+    --color-accent-yellow: var(--color-accent-yellow);
+    --color-accent-green: var(--color-accent-green);
 
     --font-family-sans: var(--font-mukta);
     --font-family-mono: var(--font-geist-mono);
@@ -28,8 +81,8 @@
 
 @media (prefers-color-scheme: dark) {
     :root {
-        --background: #1d1d1b;
-        --foreground: #ededed;
+        --background: var(--color-background);
+        --foreground: var(--color-foreground);
     }
 }
 

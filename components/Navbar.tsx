@@ -33,7 +33,7 @@ export default async function Navbar() {
           <div className="flex items-center gap-8">
             <a
               href="#"
-              className="font-bold bg-btn-primary-bg text-link-hover hover:bg-link-hover hover:text-btn-primary-bg border border-transparent hover:border-btn-primary-bg px-5 py-2 rounded-full transition-all"
+              className="font-bold bg-btn-primary-bg text-link-hover hover:bg-btn-primary-hover-bg hover:text-btn-primary-hover-text border border-transparent hover:border-btn-primary-bg px-5 py-2 rounded-full transition-colors"
             >
               Registrarse
             </a>

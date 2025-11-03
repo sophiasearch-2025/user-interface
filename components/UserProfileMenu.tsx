@@ -29,16 +29,16 @@ export default function UserProfileMenu({ userName, userRole, userInitial }: Use
   const UserButton = (
     <button
       onClick={() => setOpen(!isOpen)}
-      className={`flex items-center gap-3 px-4 py-3 w-full justify-between focus:outline-none border border-btn-secondary-bg hover:bg-btn-primary-hover-bg/10 transition-all
+      className={`flex items-center gap-3 px-4 py-3 w-full justify-between focus:outline-none border border-border-primary hover:bg-btn-primary-hover-bg/10 transition-all
       ${isOpen ? "rounded-t-xl" : "rounded-xl"}`}
     >
       <div className="flex items-center gap-3">
         <div className="flex items-center justify-center w-10 h-10 bg-btn-primary-bg rounded-full">
-          <span className="font-bold text-brand-light text-lg">{userInitial}</span>
+          <span className="font-bold text-text-primary text-lg">{userInitial}</span>
         </div>
         <div className="text-left">
           <p className="text-sm font-bold text-link-hover">{userName}</p>
-          <p className="text-xs text-muted">{userRole}</p>
+          <p className="text-xs text-text-muted">{userRole}</p>
         </div>
       </div>
 
@@ -48,29 +48,29 @@ export default function UserProfileMenu({ userName, userRole, userInitial }: Use
 
   const DropdownMenu = (
     <motion.div
-      className="absolute top-full left-0 right-0 w-full z-50 p-3 flex flex-col gap-2 border-b border-x border-btn-secondary-bg rounded-b-xl"
+      className="absolute top-full left-0 right-0 w-full z-50 p-3 flex flex-col gap-2 border-b border-x border-border-primary rounded-b-xl"
       initial={{ opacity: 0, y: -10 }}
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, y: -10 }}
-      transition={{ duration: 0.2, ease: "easeInOut" }}
+      transition={{ duration: 0.1, ease: "easeInOut" }}
     >
       <a
         href="#"
-        className="flex items-center gap-3 px-4 py-3 text-sm font-medium text-brand-light bg-brand-dark rounded-lg hover:bg-btn-primary-hover-bg/10 transition-colors"
+        className="flex items-center gap-3 px-4 py-3 text-sm font-medium text-text-primary bg-background rounded-lg hover:bg-btn-primary-hover-bg/10 transition-colors"
       >
         <User className="w-4 h-4 text-link-active" />
         Mi perfil
       </a>
       <a
         href="#"
-        className="flex items-center gap-3 px-4 py-3 text-sm font-medium text-brand-light bg-brand-dark rounded-lg hover:bg-btn-primary-hover-bg/10 transition-colors"
+        className="flex items-center gap-3 px-4 py-3 text-sm font-medium text-text-primary bg-background rounded-lg hover:bg-btn-primary-hover-bg/10 transition-colors"
       >
         <BookMarked className="w-4 h-4 text-link-active" />
         Mis colecciones
       </a>
       <a
         href="#"
-        className="flex items-center gap-3 px-4 py-3 text-sm font-medium text-brand-red bg-brand-dark/50 rounded-lg hover:bg-brand-red/20 transition-colors mt-2"
+        className="flex items-center gap-3 px-4 py-3 text-sm font-medium text-text-danger bg-background/50 rounded-lg hover:bg-text-danger/20 transition-colors mt-2"
       >
         <LogOut className="w-4 h-4" />
         Cerrar sesión
@@ -79,7 +79,7 @@ export default function UserProfileMenu({ userName, userRole, userInitial }: Use
   );
 
   return (
-    <div className="relative flex flex-col items-stretch bg-surface min-w-[260px]" ref={menuRef}>
+    <div className="relative flex flex-col items-stretch bg-background min-w-[260px]" ref={menuRef}>
       {UserButton}
       <AnimatePresence>{isOpen && DropdownMenu}</AnimatePresence>
     </div>
