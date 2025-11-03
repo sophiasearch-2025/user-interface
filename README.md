@@ -91,7 +91,7 @@ Todos los estilos personalizados se definen en `app/globals.css` usando un siste
 | :--- | :--- | :--- | :--- |
 | `--color-background` | `var(--palette-black)` | `bg-background` | Fondo principal de la aplicación. |
 | `--color-foreground` | `var(--palette-white)` | `text-foreground` | Color de texto principal (blanco). |
-| `--color-surface` | `var(--palette-blue-dark)`| `bg-surface` | Fondo de elementos "elevados" (menús, tarjetas). |
+| `--color-surface` | `var(--palette-purple)`| `bg-surface` | Fondo de elementos "elevados" (menús, tarjetas). |
 | `--color-text-primary`| `var(--palette-white)` | `text-text-primary`| Texto primario (igual que `foreground`). |
 | `--color-text-muted` | `var(--palette-grey)` | `text-muted` | Texto atenuado (ej: "Rol de usuario"). |
 | `--color-text-danger` | `var(--palette-red)` | `text-text-danger` | Texto de peligro (ej: "Cerrar sesión"). |
