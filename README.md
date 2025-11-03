@@ -50,7 +50,8 @@ El proyecto sigue la estructura estándar del App Router de Next.js:
 │   └── 📄 UserProfileMenu.tsx  (Barra de navegación principal del sitio)
 │
 └── 📁 public/                  (Archivos estáticos accesibles públicamente)
-    ├── 📄 sophia.png           (Logo de la aplicación)
+    ├── 📄 sophia_dark_bg.png           (Logo de la aplicación para fondos oscuros)
+    ├── 📄 sophia_light_bg.png          (Logo de la aplicación para fondos claros)
     └── 📄 favicon.ico          (Icono de la pestaña del navegador)
 ```
 
@@ -84,7 +85,7 @@ Todos los estilos personalizados se definen en `app/globals.css` usando un siste
 | `--palette-yellow` | `#FFC500` | Secundario |
 | `--palette-blue-dark`| `#2A3176` | Secundario |
 
-### 2. Variables semánticas *(sujeto a cambios)*
+#### 2. Variables semánticas *(sujeto a cambios)*
 
 | Variable (Semántica) | Especificación (Valor) | Uso (Clase de Tailwind) | Descripción (Rol) |
 | :--- | :--- | :--- | :--- |
