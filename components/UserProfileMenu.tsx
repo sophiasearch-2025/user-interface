@@ -10,7 +10,11 @@ type UserProfileProps = {
   userInitial: string;
 };
 
-export default function UserProfileMenu({ userName, userRole, userInitial }: UserProfileProps) {
+export default function UserProfileMenu({
+  userName,
+  userRole,
+  userInitial,
+}: UserProfileProps) {
   const [isOpen, setOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
 
@@ -34,7 +38,9 @@ export default function UserProfileMenu({ userName, userRole, userInitial }: Use
     >
       <div className="flex items-center gap-3">
         <div className="flex items-center justify-center w-10 h-10 bg-btn-primary-bg rounded-full">
-          <span className="font-bold text-text-primary text-lg">{userInitial}</span>
+          <span className="font-bold text-text-primary text-lg">
+            {userInitial}
+          </span>
         </div>
         <div className="text-left">
           <p className="text-sm font-bold text-link-hover">{userName}</p>
@@ -42,7 +48,9 @@ export default function UserProfileMenu({ userName, userRole, userInitial }: Use
         </div>
       </div>
 
-      <ChevronDown className={`w-5 h-5 text-link-active transition-transform ${isOpen ? "rotate-180" : ""}`} />
+      <ChevronDown
+        className={`w-5 h-5 text-link-active transition-transform ${isOpen ? "rotate-180" : ""}`}
+      />
     </button>
   );
 
@@ -79,7 +87,10 @@ export default function UserProfileMenu({ userName, userRole, userInitial }: Use
   );
 
   return (
-    <div className="relative flex flex-col items-stretch bg-background min-w-[260px]" ref={menuRef}>
+    <div
+      className="relative flex flex-col items-stretch bg-background min-w-[260px]"
+      ref={menuRef}
+    >
       {UserButton}
       <AnimatePresence>{isOpen && DropdownMenu}</AnimatePresence>
     </div>

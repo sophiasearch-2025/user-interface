@@ -25,6 +25,7 @@
     --color-text-secondary: var(--palette-cyan);
     --color-text-muted: var(--palette-grey);
     --color-text-danger: var(--palette-red);
+    --color-text-title: var(--palette-purple);
 
     /* Botones (Buttons) */
     --color-btn-primary-bg: var(--palette-purple);
@@ -58,6 +59,7 @@
     --color-text-secondary: var(--color-text-secondary);
     --color-text-muted: var(--color-text-muted);
     --color-text-danger: var(--color-text-danger);
+    --color-text-title: var(--palette-purple);
 
     /* Botones */
     --color-btn-primary-bg: var(--color-btn-primary-bg);
