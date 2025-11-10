@@ -58,7 +58,7 @@ export default function Search() {
       <AnimatePresence>
         {isFilterOpen && (
           <motion.div
-            className="absolute top-7 left-0 right-0 z-0 bg-surface-accent rounded-b-2xl shadow-lg p-4 pt-10"
+            className="absolute top-7 left-0 right-0 z-5 bg-surface-accent rounded-b-2xl shadow-lg p-4 pt-10"
             initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -20 }}
