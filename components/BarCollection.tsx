@@ -16,7 +16,7 @@ export default function BarCollection({ collectionTitle }: BarCollectionProps) {
       <div className="flex items-center gap-3">
         <p className="text-sm text-text-muted">Mostrar por página:</p>
 
-        <select className="bg-surface-dark border border border-border-primary rounded-md p-1 text-sm text-foreground focus:outline-none focus:border-border-primary">
+        <select className="bg-surface-dark border border-border-primary rounded-md p-1 text-sm text-foreground focus:outline-none focus:border-border-primary">
           <option value="4">4</option>
           <option value="6">6</option>
         </select>
