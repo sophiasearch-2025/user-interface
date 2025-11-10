@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Navbar from "@/components/Navbar";
 import { Mukta_Vaani, Geist_Mono } from "next/font/google";
 import "./globals.css";
 
@@ -18,14 +19,19 @@ export const metadata: Metadata = {
   description: "",
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
   return (
     <html lang="en">
-      <body className={`${muktaVaani.variable} ${geistMono.variable} antialiased`}>{children}</body>
+      <body
+        className={`${muktaVaani.variable} ${geistMono.variable} antialiased`}
+      >
+        <Navbar />
+        {children}
+      </body>
     </html>
   );
 }

@@ -1,11 +1,12 @@
 import Image from "next/image";
 import UserProfileMenu from "./UserProfileMenu";
+import Register from "./Register";
 
 async function fetchUserData() {
   return {
-    name: "Usuario",
-    role: "Rol del usuario",
-    initial: "U",
+    name: "Girasol",
+    role: "Investigadora",
+    initial: "G",
   };
 }
 
@@ -26,26 +27,34 @@ export default async function Navbar() {
             alt="Sophia Search"
           />
 
-          <a href="#" className="font-bold text-link-active hover:text-link-hover transition-colors">
+          <a
+            href="#"
+            className="font-bold text-link-active hover:text-link-hover transition-colors"
+          >
             Catálogo
           </a>
-          <a href="#" className="font-bold text-link-active hover:text-link-hover transition-colors">
+          <a
+            href="#"
+            className="font-bold text-link-active hover:text-link-hover transition-colors"
+          >
             Planes
           </a>
         </div>
 
         {isAuthenticated ? (
-          <UserProfileMenu userName={userData.name} userRole={userData.role} userInitial={userData.initial} />
+          <UserProfileMenu
+            userName={userData.name}
+            userRole={userData.role}
+            userInitial={userData.initial}
+          />
         ) : (
           <div className="flex items-center gap-8">
+            <Register />
+
             <a
               href="#"
-              className="font-bold bg-btn-primary-bg text-link-hover hover:bg-btn-primary-hover-bg hover:text-btn-primary-hover-text border border-transparent hover:border-btn-primary-bg px-5 py-2 rounded-full transition-colors"
+              className="font-bold text-link-active hover:text-link-hover transition-colors"
             >
-              Registrarse
-            </a>
-
-            <a href="#" className="font-bold text-link-active hover:text-link-hover transition-colors">
               Iniciar sesión
             </a>
           </div>
