@@ -26,10 +26,10 @@ export default function Search() {
   };
 
   return (
-    <div className="relative max-w-3xl mx-auto">
+    <div className="relative max-w-3xl w-full mx-auto">
       <div
         className="relative z-10 flex items-center gap-3
-                      bg-surface-light rounded-full p-4 shadow-lg"
+                      bg-surface-light rounded-full p-2 shadow-lg"
       >
         <button className="p-2" type="submit">
           <SearchIcon className="text-text-muted-on-light" />
@@ -50,7 +50,7 @@ export default function Search() {
           onClick={() => setIsFilterOpen(!isFilterOpen)}
         >
           <SlidersHorizontalIcon
-            className={`transition-colors w-5 h-5 ${isFilterOpen ? "text-text-primary" : "text-border-primary"}`}
+            className={`transition-colors w-5 h-5 ${isFilterOpen ? "text-text-primary" : "text-text-muted-on-light"}`}
           />
         </button>
       </div>
