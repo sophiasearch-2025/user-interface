@@ -1,10 +1,6 @@
 @import url("https://fonts.googleapis.com/css2?family=Mukta+Vaani:wght@400;500;600;700&display=swap");
 @import "tailwindcss";
 
-html {
-    background-color: var(--color-surface-light);
-}
-
 :root {
     /* -- Primarios -- */
     --palette-purple: #532ece;
@@ -112,14 +108,8 @@ html {
     }
 }
 
-@media (prefers-color-scheme: dark) {
-    :root {
-        --background: var(--color-background);
-        --foreground: var(--color-foreground);
-    }
-}
-
+html,
 body {
-    background: var(--background);
-    color: var(--foreground);
+    background-color: var(--color-background);
+    color: var(--color-foreground);
 }
