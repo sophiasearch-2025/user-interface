@@ -1,0 +1,52 @@
+.track {
+  position: relative;
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  overflow-x: auto;
+  overflow-y: visible;
+  scroll-snap-type: x mandatory;
+  padding-block: 0.25rem;
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+  align-items: stretch;
+
+  --scale: 1;
+  --card-h: 360px;
+  --card-w: calc(var(--card-h) * 0.75);
+  --gap: clamp(0rem, calc(2.5rem * var(--scale) * var(--scale)), 2.5rem);
+
+  gap: var(--gap);
+  min-height: calc(var(--card-h, 360px) * var(--scale, 1));
+}
+
+.track::-webkit-scrollbar {
+  display: none;
+}
+
+.track.centered {
+  justify-content: center;
+}
+
+.item {
+  scroll-snap-align: start;
+  flex-shrink: 0;
+  display: flex;
+
+  min-width: calc((var(--card-h) * 0.75) * var(--scale));
+  width:     calc((var(--card-h) * 0.75) * var(--scale));
+  min-height: calc(var(--card-h) * var(--scale));
+  height:      calc(var(--card-h) * var(--scale));
+}
+
+.item > * {
+  display: block;
+  box-sizing: border-box;
+
+  width: auto;      /* deja que el aspect-ratio gobierne */
+  height: auto;
+  aspect-ratio: 3 / 4;
+  transform: scale(var(--scale));
+  transform-origin: top left;
+  box-sizing: border-box;
+}

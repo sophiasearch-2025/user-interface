@@ -1,0 +1,13 @@
+/* Estilos para MediaAvatar */
+
+.avatar {
+  position: relative;
+  border-radius: 9999px;
+  overflow: hidden;
+  flex-shrink: 0;
+  background: color-mix(in srgb, var(--palette-grey) 10%, transparent);
+}
+
+.image {
+  object-fit: cover;
+}

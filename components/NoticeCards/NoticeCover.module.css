@@ -1,0 +1,12 @@
+/* Estilos para NoticeCover.module */
+
+.cover {
+  position: relative;
+  width: 100%;
+  margin-top: 1rem;
+  background: color-mix(in srgb, var(--palette-grey) 10%, transparent);
+}
+
+.image {
+  object-fit: cover;
+}

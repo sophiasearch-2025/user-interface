@@ -1,0 +1,45 @@
+/* Estilos para SectionHeadingLeft */
+
+.section-heading-left-container {
+  position: relative;
+  padding-left: 3.5rem;
+}
+
+.section-heading-left-bar {
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  height: 1.25rem;
+  width: 3rem;
+  background: var(--color-surface);
+}
+
+.section-heading-left-h2 {
+  line-height: 1.1;
+}
+
+.section-heading-left-top {
+  display: block;
+  font-size: 1.875rem;
+  line-height: 2.25rem;
+  font-weight: 800;
+  color: var(--color-text-primary);
+}
+
+.section-heading-left-bottom {
+  display: block;
+  font-size: 1.875rem;
+  line-height: 2.25rem;
+  font-weight: 800;
+  color: var(--color-surface);
+}
+
+/* sm:text-4xl */
+@media (min-width: 640px) {
+  .section-heading-left-top,
+  .section-heading-left-bottom {
+    font-size: 2.25rem;
+    line-height: 2.5rem;
+  }
+}
