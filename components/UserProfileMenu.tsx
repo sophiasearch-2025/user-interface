@@ -52,7 +52,7 @@ export default function UserProfileMenu({ userName, userRole, userInitial }: Use
       <AnimatePresence>
         {isOpen && (
           <motion.div
-            className="absolute top-full left-0 right-0 w-full z-50 p-3 flex flex-col gap-2 border-b border-x border-border-primary rounded-b-xl"
+            className="absolute bg-background top-full left-0 right-0 w-full z-50 p-3 flex flex-col gap-2 border-b border-x border-border-primary rounded-b-xl"
             initial={{ opacity: 0, y: -10 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -10 }}
