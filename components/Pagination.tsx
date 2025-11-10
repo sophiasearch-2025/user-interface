@@ -4,11 +4,7 @@ type PaginationProps = {
   onPageChange: (pageNumber: number) => void;
 };
 
-export default function Pagination({
-  currentPage,
-  totalPages,
-  onPageChange,
-}: PaginationProps) {
+export default function Pagination({ currentPage, totalPages, onPageChange }: PaginationProps) {
   const pageNumbers = [];
   for (let i = 1; i <= totalPages; i++) pageNumbers.push(i);
 
@@ -23,8 +19,8 @@ export default function Pagination({
                 flex items-center justify-center w-10 h-10 rounded-full font-bold
                 ${
                   currentPage === number
-                    ? "bg-surface" // Estilo ACTIVO
-                    : "text-gray-500 hover:text-white" // Estilo INACTIVO
+                    ? "bg-surface-accent text-text-primary"
+                    : "text-text-muted hover:text-foreground"
                 }
               `}
           >

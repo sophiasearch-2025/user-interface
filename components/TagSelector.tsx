@@ -58,7 +58,7 @@ export default function TagSelector({
             className="flex items-center gap-1 bg-surface-accent-dark text-text-primary text-sm font-medium px-3 py-1 rounded-full"
           >
             <span>{item}</span>
-            <button onClick={() => handleRemove(item)} className="hover:bg-background-dark/20 rounded-full">
+            <button onClick={() => handleRemove(item)} className="hover:bg-black/20 rounded-full">
               <X className="w-4 h-4" />
             </button>
           </div>
@@ -77,7 +77,7 @@ export default function TagSelector({
         <AnimatePresence>
           {isDropdownOpen && (
             <motion.div
-              className="absolute top-full left-0 mt-2 w-56 z-20 bg-btn-primary-hover-bg rounded-lg shadow-lg p-2"
+              className="absolute top-full left-0 mt-2 w-56 z-20 bg-surface-light rounded-lg shadow-lg p-2"
               ref={dropdownRef}
               initial={{ opacity: 0, y: -10 }}
               animate={{ opacity: 1, y: 0 }}
@@ -89,13 +89,13 @@ export default function TagSelector({
                   <button
                     key={option}
                     onClick={() => handleAdd(option)}
-                    className="block w-full text-left text-surface hover:bg-surface hover:text-text-primary px-3 py-2 rounded transition-colors"
+                    className="block w-full text-left text-foreground-on-light hover:bg-black/10 px-3 py-2 rounded transition-colors"
                   >
                     {option}
                   </button>
                 ))
               ) : (
-                <span className="block text-text-muted px-3 py-2">No hay más opciones</span>
+                <span className="block text-text-muted-on-light px-3 py-2">No hay más opciones</span>
               )}
             </motion.div>
           )}

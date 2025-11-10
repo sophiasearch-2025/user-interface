@@ -19,42 +19,29 @@ export default async function Navbar() {
       <div className="flex justify-between items-center mx-auto px-8 py-4">
         <div className="flex items-center gap-8">
           <Image
-            className="w-full h-20"
-            sizes="100vw"
+            className="h-20 w-auto"
             src="/sophia_dark_bg.png"
-            width={0}
-            height={0}
+            width={283}
+            height={90}
             alt="Sophia Search"
+            priority={true}
           />
 
-          <a
-            href="#"
-            className="font-bold text-link-active hover:text-link-hover transition-colors"
-          >
+          <a href="#" className="font-bold text-link-active hover:text-link-hover transition-colors">
             Catálogo
           </a>
-          <a
-            href="#"
-            className="font-bold text-link-active hover:text-link-hover transition-colors"
-          >
+          <a href="#" className="font-bold text-link-active hover:text-link-hover transition-colors">
             Planes
           </a>
         </div>
 
         {isAuthenticated ? (
-          <UserProfileMenu
-            userName={userData.name}
-            userRole={userData.role}
-            userInitial={userData.initial}
-          />
+          <UserProfileMenu userName={userData.name} userRole={userData.role} userInitial={userData.initial} />
         ) : (
           <div className="flex items-center gap-8">
             <Register />
 
-            <a
-              href="#"
-              className="font-bold text-link-active hover:text-link-hover transition-colors"
-            >
+            <a href="#" className="font-bold text-link-active hover:text-link-hover transition-colors">
               Iniciar sesión
             </a>
           </div>

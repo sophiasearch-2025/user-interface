@@ -10,11 +10,7 @@ type UserProfileProps = {
   userInitial: string;
 };
 
-export default function UserProfileMenu({
-  userName,
-  userRole,
-  userInitial,
-}: UserProfileProps) {
+export default function UserProfileMenu({ userName, userRole, userInitial }: UserProfileProps) {
   const [isOpen, setOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
 
@@ -38,9 +34,7 @@ export default function UserProfileMenu({
     >
       <div className="flex items-center gap-3">
         <div className="flex items-center justify-center w-10 h-10 bg-btn-primary-bg rounded-full">
-          <span className="font-bold text-text-primary text-lg">
-            {userInitial}
-          </span>
+          <span className="font-bold text-text-primary text-lg">{userInitial}</span>
         </div>
         <div className="text-left">
           <p className="text-sm font-bold text-link-hover">{userName}</p>
@@ -48,51 +42,46 @@ export default function UserProfileMenu({
         </div>
       </div>
 
-      <ChevronDown
-        className={`w-5 h-5 text-link-active transition-transform ${isOpen ? "rotate-180" : ""}`}
-      />
+      <ChevronDown className={`w-5 h-5 text-link-active transition-transform ${isOpen ? "rotate-180" : ""}`} />
     </button>
   );
 
-  const DropdownMenu = (
-    <motion.div
-      className="absolute top-full left-0 right-0 w-full z-50 p-3 flex flex-col gap-2 border-b border-x border-border-primary rounded-b-xl"
-      initial={{ opacity: 0, y: -10 }}
-      animate={{ opacity: 1, y: 0 }}
-      exit={{ opacity: 0, y: -10 }}
-      transition={{ duration: 0.1, ease: "easeInOut" }}
-    >
-      <a
-        href="#"
-        className="flex items-center gap-3 px-4 py-3 text-sm font-medium text-text-primary bg-background rounded-lg hover:bg-btn-primary-hover-bg/10 transition-colors"
-      >
-        <User className="w-4 h-4 text-link-active" />
-        Mi perfil
-      </a>
-      <a
-        href="#"
-        className="flex items-center gap-3 px-4 py-3 text-sm font-medium text-text-primary bg-background rounded-lg hover:bg-btn-primary-hover-bg/10 transition-colors"
-      >
-        <BookMarked className="w-4 h-4 text-link-active" />
-        Mis colecciones
-      </a>
-      <a
-        href="#"
-        className="flex items-center gap-3 px-4 py-3 text-sm font-medium text-text-danger bg-background/50 rounded-lg hover:bg-text-danger/20 transition-colors mt-2"
-      >
-        <LogOut className="w-4 h-4" />
-        Cerrar sesión
-      </a>
-    </motion.div>
-  );
-
   return (
-    <div
-      className="relative flex flex-col items-stretch bg-background min-w-[260px]"
-      ref={menuRef}
-    >
+    <div className="relative flex flex-col items-stretch bg-surface-dark min-w-[260px]" ref={menuRef}>
       {UserButton}
-      <AnimatePresence>{isOpen && DropdownMenu}</AnimatePresence>
+      <AnimatePresence>
+        {isOpen && (
+          <motion.div
+            className="absolute top-full left-0 right-0 w-full z-50 p-3 flex flex-col gap-2 border-b border-x border-border-primary rounded-b-xl"
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -10 }}
+            transition={{ duration: 0.1, ease: "easeInOut" }}
+          >
+            <a
+              href="#"
+              className="flex items-center gap-3 px-4 py-3 text-sm font-medium text-text-primary bg-surface-dark rounded-lg hover:bg-btn-primary-hover-bg/10 transition-colors"
+            >
+              <User className="w-4 h-4 text-link-active" />
+              Mi perfil
+            </a>
+            <a
+              href="#"
+              className="flex items-center gap-3 px-4 py-3 text-sm font-medium text-text-primary bg-surface-dark rounded-lg hover:bg-btn-primary-hover-bg/10 transition-colors"
+            >
+              <BookMarked className="w-4 h-4 text-link-active" />
+              Mis colecciones
+            </a>
+            <a
+              href="#"
+              className="flex items-center gap-3 px-4 py-3 text-sm font-medium text-text-danger bg-surface-dark/50 rounded-lg hover:bg-text-danger/20 transition-colors mt-2"
+            >
+              <LogOut className="w-4 h-4" />
+              Cerrar sesión
+            </a>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }
