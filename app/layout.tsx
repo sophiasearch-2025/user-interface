@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Navbar from "@/components/Navbar";
 import { Mukta_Vaani, Geist_Mono } from "next/font/google";
 import "./globals.css";
+import { Footer } from "@/components/Footer";
 
 const muktaVaani = Mukta_Vaani({
   variable: "--font-mukta",
@@ -26,11 +27,12 @@ export default async function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body
-        className={`${muktaVaani.variable} ${geistMono.variable} antialiased`}
-      >
+      <body className={`${muktaVaani.variable} ${geistMono.variable} antialiased min-h-screen flex flex-col`}>
         <Navbar />
-        {children}
+
+        <main className="grow">{children}</main>
+
+        <Footer />
       </body>
     </html>
   );
