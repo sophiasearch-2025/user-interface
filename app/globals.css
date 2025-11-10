@@ -19,6 +19,8 @@
     --color-background: var(--palette-black);
     --color-foreground: var(--palette-white);
     --color-surface: var(--palette-purple);
+    --color-surface-light: var(--palette-white);
+    --color-surface-accent-dark: var(--palette-blue-dark);
 
     /* Texto (Foregrounds) */
     --color-text-primary: var(--palette-white);
@@ -49,8 +51,10 @@
 
 @theme inline {
     /* Fondos */
-    --color-background: var(--color-background);
+    --color-background-dark: var(--color-background);
     --color-surface: var(--color-surface);
+    --color-surface-light: var(--color-surface-light);
+    --color-surface-accent-dark: var(--color-surface-accent-dark);
 
     /* Texto */
     --color-foreground: var(--color-foreground);
@@ -77,6 +81,13 @@
 
     --font-family-sans: var(--font-mukta);
     --font-family-mono: var(--font-geist-mono);
+}
+
+@layer base {
+    button:not(:disabled),
+    [role="button"]:not(:disabled) {
+        cursor: pointer;
+    }
 }
 
 @media (prefers-color-scheme: dark) {
