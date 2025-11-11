@@ -80,8 +80,10 @@
   line-height: 1.375;
   color: var(--palette-black, #000000);
   flex-shrink: 0;
-  /* Asegurar que el título siempre sea visible */
-  min-height: 2.75em;
+  /* Ajustar al contenido real - máximo para 2 líneas */
+  min-height: 1.375em; /* Altura mínima para una línea */
+  max-height: 2.75em; /* Altura máxima para 2 líneas */
+  overflow: hidden;
 }
 
 .caption {
@@ -89,8 +91,10 @@
   font-weight: 600;
   color: var(--palette-grey, #6b7280);
   flex-shrink: 0;
-  /* Asegurar que el caption tenga espacio mínimo */
-  min-height: 1.25em;
+  /* Ajustar al contenido real */
+  min-height: 1.2em; /* Altura mínima para una línea */
+  max-height: 1.2em; /* Fijo para 1 línea como antes */
+  overflow: hidden;
 }
 
 .description {
@@ -98,8 +102,10 @@
   line-height: 1.625;
   color: color-mix(in srgb, var(--palette-black, #000000) 90%, transparent);
   flex-shrink: 0;
-  /* Permitir que la descripción se comprima pero sin desaparecer */
-  min-height: 1.625em;
+  /* Ajustar al contenido real */
+  min-height: 1.625em; /* Altura mínima para una línea */
+  max-height: 3.25em; /* Altura máxima para 2 líneas */
+  overflow: hidden;
 }
 
 .actions {
@@ -111,6 +117,7 @@
   padding: clamp(0.5rem, 2vw, 0.75rem) clamp(0.5rem, 2vw, 1.25rem) clamp(0.5rem, 2vw, 1.25rem);
   display: flex;
   justify-content: flex-end;
+  align-items: flex-end;
   flex-shrink: 0;
   /* Crear un fondo sutil para separar del contenido */
   background: linear-gradient(to bottom, transparent 0%, var(--color-foreground, #ffffff) 20%);
@@ -118,6 +125,10 @@
   pointer-events: auto;
   /* Espaciado mínimo desde los bordes */
   min-height: clamp(2.5rem, 6vw, 3rem);
+  /* Contener el botón dentro del espacio disponible */
+  min-width: 0;
+  /* Asegurar que el flex item no crezca más de lo necesario */
+  max-width: 100%;
 }
 
 /* Hacer el botón más responsivo */
@@ -125,17 +136,34 @@
   font-size: clamp(0.625rem, 1.2vw, 0.875rem);
   padding: clamp(0.375rem, 0.8vw, 0.5rem) clamp(0.75rem, 1.5vw, 1rem);
   min-height: 2.25rem;
-  /* Asegurar que el botón siempre sea visible */
+  /* Asegurar que el botón se ajuste al espacio disponible */
   white-space: nowrap;
-  max-width: 100%;
+  max-width: calc(100% - 0.5rem); /* Dejar un pequeño margen */
   overflow: hidden;
   text-overflow: ellipsis;
+  flex-shrink: 1; /* Permitir que se comprima si es necesario */
+  flex-grow: 0; /* No crecer más allá de su tamaño natural */
+}
+
+.actions :global(.button-fullcolor) {
+  font-size: clamp(0.625rem, 1.2vw, 0.875rem);
+  padding: clamp(0.375rem, 0.8vw, 0.5rem) clamp(0.75rem, 1.5vw, 1rem);
+  min-height: 2.25rem;
+  /* Asegurar que el botón se ajuste al espacio disponible */
+  white-space: nowrap;
+  max-width: calc(100% - 0.5rem); /* Dejar un pequeño margen */
+  overflow: hidden;
+  text-overflow: ellipsis;
+  flex-shrink: 1; /* Permitir que se comprima si es necesario */
+  flex-grow: 0; /* No crecer más allá de su tamaño natural */
 }
 
 /* Media queries para diferentes tamaños de pantalla */
 @media (max-width: 480px) {
   .actions {
     padding: clamp(0.375rem, 1vw, 0.5rem) clamp(0.75rem, 1.5vw, 1rem) clamp(0.75rem, 1.5vw, 1rem);
+    /* Asegurar que el botón respete el espacio en pantallas pequeñas */
+    min-width: 0;
   }
   
   .header {
@@ -183,5 +211,14 @@
   .actions :global(.button-outline) {
     font-size: 0.625rem;
     padding: 0.375rem 0.75rem;
+    max-width: calc(100% - 0.25rem);
+    flex-shrink: 1;
+  }
+  
+  .actions :global(.button-fullcolor) {
+    font-size: 0.625rem;
+    padding: 0.375rem 0.75rem;
+    max-width: calc(100% - 0.25rem);
+    flex-shrink: 1;
   }
 }

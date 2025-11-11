@@ -82,16 +82,37 @@ export default function TestPage() {
 
   return (
     <div className="max-w-7xl mx-auto">
-      <SectionHeadingLeft
-        top="NoticeCard Autoresponsive"
-        bottom="Responsive distintos tamaños y relaciones de aspecto"
-      />
-      <div className="mt-12 flex flex-row justify-center gap-8">
-        <div className="flex flex-col items-center">
-          <p className="text-sm font-medium">Tamaño por defecto (330x440px - 3:4) [Demo ajustable]</p>
+    <SectionHeadingLeft
+      top="NoticeCard Autoresponsive"
+      bottom="Responsive distintos tamaños y estilos de botón"
+    />
+      <div className="mt-12 flex flex-col items-center">
+
+        <div className="flex flex-col items-center mb-4">
+          <p className="text-sm font-medium">[Por defecto: 330x440px - 3:4] [Demo ajustable]</p>
           <p className="text-sm font-medium">(Esquina inferior derecha para arrastrar)</p>
-          <NoticeCardA {...notices[0]} resizable={true} />
         </div>
+
+        <div className="flex flex-row justify-center gap-8">
+          <div className="flex flex-col items-center">
+            <p className="text-sm font-medium">[buttonVariant="outline"]</p>
+            <NoticeCardA
+              {...notices[0]}
+              resizable={true}
+            />
+          </div>
+          <div className="flex flex-col items-center">
+            <p className="text-sm font-medium">[buttonVariant="filled"]</p>
+            <NoticeCardA
+              {...notices[0]}
+              resizable={true}
+              buttonVariant="filled"
+              textButton="Eliminar de colección"
+              coverSrc="/favicon.ico"
+            />
+          </div>
+        </div>
+
       </div>
       <div className="mt-12 flex flex-row gap-8">
         <SectionHeadingLeft top="Carrusel de componentes" bottom="Para usar principalmente con NoticeCard" />

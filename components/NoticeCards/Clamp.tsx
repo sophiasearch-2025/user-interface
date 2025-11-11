@@ -1,30 +1,75 @@
-// Este componente limita visualmente el texto a un número fijo de líneas
-// para cualquier etiqueta (as: Tag) (Por defecto <p>) que cumpla con el formato
-export default function Clamp({
+"use client";
+import { useLayoutEffect, useRef, useState } from "react";
+
+// Componente Clamp inteligente que ajusta el espacio al contenido real
+function Clamp({
   as: Tag = "p",
-  lines = 2,
+  maxLines = 2,
   className = "",
   title,
   children,
 }: {
-  as?: any;                   // tipo de elemento React (p, span, h1, etc.)
-  lines?: number;             // número de líneas visibles antes del recorte
-  className?: string;         // clases personalizadas CSS
-  title?: string;             // atributo "title" del elemento (texto al pasar el mouse)
-  children: React.ReactNode;  // contenido a mostrar dentro del tag
+  as?: any;
+  maxLines?: number;
+  className?: string;
+  title?: string;
+  children: React.ReactNode;
 }) {
+  const elementRef = useRef<HTMLElement>(null);
+  const [needsClamp, setNeedsClamp] = useState(false);
+
+  useLayoutEffect(() => {
+    const element = elementRef.current;
+    if (!element) return;
+
+    const checkClampNeed = () => {
+      // Calcular cuántas líneas ocupa el contenido
+      const { scrollHeight, clientHeight } = element;
+      const lineHeight = parseFloat(window.getComputedStyle(element).lineHeight);
+      const actualLines = Math.ceil(scrollHeight / lineHeight);
+      
+      setNeedsClamp(actualLines > maxLines);
+    };
+
+    // Usar requestAnimationFrame para evitar múltiples re-renderizados
+    const scheduleCheck = () => {
+      requestAnimationFrame(checkClampNeed);
+    };
+
+    // Observar cambios en el elemento
+    const observer = new ResizeObserver(scheduleCheck);
+    observer.observe(element);
+
+    // Verificación inicial
+    scheduleCheck();
+
+    return () => {
+      observer.disconnect();
+    };
+  }, [children, maxLines]);
+
   return (
     <Tag
+      ref={elementRef}
       className={className}
       style={{
-        display: "-webkit-box",             // usa modelo flexbox compatible con webkit
-        WebkitLineClamp: lines,             // define el número máximo de líneas
-        WebkitBoxOrient: "vertical" as any, // orienta el texto en columnas verticales
-        overflow: "hidden",                 // oculta el texto que excede el límite
+        // Altura dinámica basada en el contenido real
+        height: needsClamp ? undefined : "auto",
+        // Line-clamp solo cuando es necesario
+        ...(needsClamp ? {
+          display: "-webkit-box",
+          WebkitLineClamp: maxLines,
+          WebkitBoxOrient: "vertical" as any,
+          overflow: "hidden",
+        } : {
+          overflow: "visible",
+        }),
       }}
-      title={title}                         // muestra tooltip al pasar el cursor
+      title={needsClamp ? title : undefined}
     >
       {children}
     </Tag>
   );
 }
+
+export default Clamp;

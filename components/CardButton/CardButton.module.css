@@ -1,0 +1,81 @@
+/* Estilos unificados para CardButton */
+
+/* Estilo Outline (por defecto) */
+.button-outline {
+  display: inline-block;
+  width: auto;
+  max-width: 100%;
+  border-radius: 9999px;
+  padding: 0.5rem 1.25rem;
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+  font-weight: 700;
+  border: 1px solid var(--color-border-primary);
+  color: var(--color-btn-primary-hover-text);
+  background: transparent;
+  transition: color 0.2s, background-color 0.2s, border-color 0.2s;
+  cursor: pointer;
+  /* Permitir que el texto se comprima si es necesario */
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  box-sizing: border-box;
+}
+
+.button-outline:hover:not(:disabled) {
+  background: var(--color-btn-primary-hover-bg, rgba(0,0,0,0.06));
+  color: var(--color-border-primary);
+}
+
+.button-outline:active:not(:disabled) {
+  background: var(--color-btn-primary-hover-bg, rgba(0,0,0,0.06));
+  color: var(--palette-grey-dark);
+}
+
+.button-outline:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* Estilo Filled (coloreado) */
+.button-fullcolor {
+  display: inline-block;
+  width: auto;
+  max-width: 100%;
+  border-radius: 9999px;
+  padding: 0.5rem 1.25rem;
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+  font-weight: 700;
+  border: 1px solid var(--palette-red);
+  background: var(--palette-red);
+  color: white;
+  transition: background-color 0.2s, border-color 0.2s, transform 0.1s, box-shadow 0.2s;
+  cursor: pointer;
+  /* Permitir que el texto se comprima si es necesario */
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  box-sizing: border-box;
+  box-shadow: 0 1px 3px rgba(59, 130, 246, 0.3);
+}
+
+.button-fullcolor:hover:not(:disabled) {
+  background: var(--palette-purple);
+  border-color: var(--palette-purple);
+  box-shadow: 0 4px 8px rgba(59, 130, 246, 0.4);
+}
+
+.button-fullcolor:active:not(:disabled) {
+  background: var(--palette-grey-dark);
+  border-color: var(--palette-grey-dark);
+  box-shadow: 0 2px 4px rgba(59, 130, 246, 0.3);
+}
+
+.button-fullcolor:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  background: var(--palette-grey);
+  border-color: var(--palette-grey);
+  box-shadow: none;
+}
