@@ -10,7 +10,7 @@ export default function Register() {
   const closeModal = () => setIsOpen(false);
 
   return (
-    <>
+    <div>
       <button
         onClick={openModal}
         className="font-bold bg-btn-primary-bg text-btn-primary-text hover:bg-btn-primary-hover-bg hover:text-btn-primary-hover-text border border-transparent hover:border-btn-primary-bg px-5 py-2 rounded-full transition-colors"
@@ -170,6 +170,6 @@ export default function Register() {
           </div>
         </div>
       )}
-    </>
+    </div>
   );
 }
