@@ -1,8 +1,9 @@
 import { Carousel } from "@/components";
 import Register from "@/components/Register";
 import Search from "@/components/Search";
+import { isAuthenticated } from "@/lib/session";
 
-export default function Home() {
+export default async function Home() {
   const latestNews = [
     {
       sourceName: "El Informador",
@@ -96,7 +97,7 @@ export default function Home() {
           <h3 className="text-xl font-medium">Descubre la magia de la IA aplicada a tus investigaciones.</h3>
 
           <div className="flex items-center justify-center gap-4">
-            <Register />
+            {!(await isAuthenticated()) && <Register />}
 
             <button className="font-bold bg-btn-primary-hover-bg hover:bg-btn-primary-hover-bg/90 text-btn-primary-hover-text border border-btn-primary-bg px-5 py-2 rounded-full transition-colors">
               Comparar planes

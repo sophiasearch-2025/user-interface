@@ -1,18 +1,10 @@
 import Image from "next/image";
 import UserProfileMenu from "./UserProfileMenu";
 import Register from "./Register";
-
-async function fetchUserData() {
-  return {
-    name: "Girasol",
-    role: "Investigadora",
-    initial: "G",
-  };
-}
+import { UserData, fetchUserData } from "../lib/session";
 
 export default async function Navbar() {
-  const userData = await fetchUserData();
-  const isAuthenticated = !!userData;
+  const userData: UserData | null = await fetchUserData();
 
   return (
     <nav className="w-full">
@@ -35,8 +27,8 @@ export default async function Navbar() {
           </a>
         </div>
 
-        {isAuthenticated ? (
-          <UserProfileMenu userName={userData.name} userRole={userData.role} userInitial={userData.initial} />
+        {userData ? (
+          <UserProfileMenu name={userData.name} role={userData.role} initial={userData.initial} />
         ) : (
           <div className="flex items-center gap-8">
             <Register />

@@ -3,14 +3,9 @@
 import { useState, useEffect, useRef } from "react";
 import { ChevronDown, User, BookMarked, LogOut } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
+import { UserData } from "@/lib/session";
 
-type UserProfileProps = {
-  userName: string;
-  userRole: string;
-  userInitial: string;
-};
-
-export default function UserProfileMenu({ userName, userRole, userInitial }: UserProfileProps) {
+export default function UserProfileMenu({ name: userName, role: userRole, initial: userInitial }: UserData) {
   const [isOpen, setOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
 
