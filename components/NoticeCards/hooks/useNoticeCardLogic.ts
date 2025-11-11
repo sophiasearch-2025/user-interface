@@ -97,8 +97,6 @@ export const useNoticeCardLogic = ({
       setScale(results.finalScale);
       setButtonTransform(results.buttonTransform);
       setShowCover(results.coverVisible);
-      setDynamicDescriptionLines(results.descriptionLines);
-      setDynamicCaptionLines(results.captionLines);
       
       // Aplicar scale al canvas
       canvas.style.setProperty("--scale", String(results.finalScale));

@@ -4,7 +4,6 @@ import {
 
 import {
   shouldShowCover,
-  calculateDynamicLines,
 } from './calculations';
 
 import {
@@ -38,10 +37,6 @@ interface LayoutCalculationResults {
   buttonTransform: number;
   // Indica si el cover debe mostrarse dada el área efectiva disponible.
   coverVisible: boolean;
-  // Número de líneas permitidas para la descripción, en función del alto disponible.
-  descriptionLines: number;
-  // Número de líneas permitidas para la leyenda (caption), en función del alto disponible.
-  captionLines: number;
 }
 
 
@@ -76,22 +71,17 @@ const performAllCalculations = (
   // 2. Calcular visibilidad del cover
   const coverVisible = shouldShowCover(effectiveWidth, effectiveHeight, coverConfig);
   
-  // 3. Calcular líneas dinámicas
-  const { descriptionLines, captionLines } = calculateDynamicLines(effectiveHeight);
-  
-  // 4. Calcular escala óptima
+  // 3. Calcular escala óptima
   const baseScale = calculateOptimalScale(frameWidth, frameHeight, contentWidth, contentHeight);
   const finalScale = applyContentScale(baseScale, contentScale);
   
-  // 5. Calcular transformación del botón
+  // 4. Calcular transformación del botón
   const buttonTransform = calculateButtonScale(contentScale, buttonScale);
   
   return {
     finalScale,
     buttonTransform,
     coverVisible,
-    descriptionLines,
-    captionLines
   };
 };
 

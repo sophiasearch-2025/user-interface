@@ -67,8 +67,6 @@ export default function NoticeCardA({
     scale,
     buttonTransform,
     showCover,
-    dynamicDescriptionLines,
-    dynamicCaptionLines,
     getDimensionStyle,
     frameRef,
     canvasRef,
@@ -146,7 +144,7 @@ export default function NoticeCardA({
             
             <Clamp 
               as="p" 
-              maxLines={dynamicCaptionLines} 
+              maxLines={2} 
               className={styles["caption"]} 
               title={caption}
             >
@@ -155,7 +153,7 @@ export default function NoticeCardA({
             
             <Clamp 
               as="p" 
-              maxLines={dynamicDescriptionLines} 
+              maxLines={20} 
               className={styles["description"]} 
               title={description}
             >
