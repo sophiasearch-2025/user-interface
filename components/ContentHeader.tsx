@@ -8,7 +8,7 @@ type ContentHeaderProps = {
 export default function ContentHeader({ firstLine, secondLine }: ContentHeaderProps) {
   return (
     <div className="flex justify-between items-center mx-auto py-4">
-      <Title firstLine={firstLine} secondLine={secondLine} fontSize="4xl" />
+      <Title firstLine={firstLine} secondLine={secondLine} />
 
       <div className="flex items-center gap-3 px-8">
         <p className="text-sm text-text-muted">Mostrar por página:</p>

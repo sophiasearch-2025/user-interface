@@ -108,12 +108,11 @@ export default async function Home() {
       </div>
 
       <div className="flex flex-col gap-10">
-        <Title firstLine="Últimas" secondLine="noticias añadidas" fontSize="4xl" />
+        <Title firstLine="Últimas" secondLine="noticias añadidas" />
 
         <Carousel items={latestNews} render="NoticeCardA" maxWidth="95vw" />
 
         <div className="flex items-center justify-center">
-          {" "}
           <a
             className="font-bold bg-btn-primary-bg hover:bg-btn-primary-bg/90 text-btn-primary-text px-5 py-2 rounded-full transition-colors"
             href="/news"
