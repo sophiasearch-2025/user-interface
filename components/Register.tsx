@@ -7,8 +7,88 @@ export default function Register() {
   const [isOpen, setIsOpen] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
 
+  // Estado para los datos del formulario
+  const [formData, setFormData] = useState({
+    nombre: "",
+    nombreUsuario: "",
+    fechaNacimiento: "",
+    genero: "",
+    rol: "",
+    correo: "",
+    contrasena: "",
+    confirmarContrasena: "",
+  });
+
+  // Estado para los errores
+  const [errors, setErrors] = useState<{ [key: string]: string }>({});
+
   const openModal = () => setIsOpen(true);
-  const closeModal = () => setIsOpen(false);
+  const closeModal = () => {
+    setIsOpen(false);
+    setErrors({}); // Limpiar errores al cerrar
+  };
+
+  // Función para manejar cambios en los inputs
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+    const { name, value } = e.target;
+    
+    // Actualiza el valor del campo
+    setFormData((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+
+    // Limpia el error de este campo si el usuario empieza a corregirlo
+    if (errors[name]) {
+      setErrors((prev) => {
+        const newErrors = { ...prev };
+        delete newErrors[name];
+        return newErrors;
+      });
+    }
+  };
+
+  // Función de validación y envío
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault(); // Evita que la página se recargue
+    const newErrors: { [key: string]: string } = {};
+
+
+    // Validamos campos vacíos
+    if (!formData.nombre.trim()) newErrors.nombre = "El nombre es obligatorio.";
+    if (!formData.nombreUsuario.trim()) newErrors.nombreUsuario = "El usuario es obligatorio.";
+    if (!formData.fechaNacimiento) newErrors.fechaNacimiento = "La fecha es obligatoria.";
+    if (!formData.genero) newErrors.genero = "Selecciona un género.";
+    if (!formData.rol || formData.rol === "seleccionar") newErrors.rol = "Selecciona un rol.";
+    if (!formData.contrasena) newErrors.contrasena = "La contraseña es obligatoria.";
+    
+    // Validamos contraseña (mínimo 6 caracteres)
+    if (formData.contrasena && formData.contrasena.length < 6) {
+      newErrors.contrasena = "La contraseña debe tener al menos 6 caracteres.";
+    }
+    // Validamos que las contraseñas coincidan
+    if (formData.contrasena !== formData.confirmarContrasena) {
+      newErrors.confirmarContrasena = "Las contraseñas no coinciden.";
+    }
+    // Validamos correo
+    if (!formData.correo) {
+      newErrors.correo = "El correo es obligatorio.";
+    } else {
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!emailRegex.test(formData.correo)) {
+        newErrors.correo = "El formato del correo no es válido.";
+      }
+    }
+
+
+    // Si hay errores, los guardamos y no enviamos nada
+    if (Object.keys(newErrors).length > 0) {
+      setErrors(newErrors);
+    } else {
+      console.log("Formulario Válido. Datos listos para enviar:", formData);
+      alert("Registro de usuario exitoso.");
+    }
+  };
 
   return (
     <div>
@@ -28,10 +108,14 @@ export default function Register() {
             exit={{ opacity: 0 }}
             transition={{ duration: 0.1, ease: "easeInOut" }}
           >
-            <div className="flex flex-col items-center gap-6">
+            {/* Agregamos la etiqueta <form> para manejar el submit */}
+            <form 
+              onSubmit={handleSubmit}
+              className="flex flex-col items-center gap-6"
+              onClick={(e) => e.stopPropagation()} 
+            >
               <div
                 className="bg-surface-light z-50 p-10 rounded-2xl shadow-lg max-w-lg w-full max-h-[90vh] overflow-y-auto"
-                onClick={(e) => e.stopPropagation()}
               >
                 <h2 className="text-3xl font-bold text-text-accent mb-2">Registrarse</h2>
                 <p className="text-text-muted-on-light mb-8">Para unirse a cientos de investigadores</p>
@@ -45,8 +129,13 @@ export default function Register() {
                     type="text"
                     id="nombre"
                     name="nombre"
-                    className="w-full px-4 py-2.5 border border-border-muted-on-light rounded-full focus:ring-text-accent focus:border-text-accent text-foreground-on-light"
+                    value={formData.nombre}
+                    onChange={handleChange}
+                    className={`w-full px-4 py-2.5 border rounded-full focus:ring-text-accent focus:border-text-accent text-foreground-on-light ${
+                      errors.nombre ? "border-red-500" : "border-border-muted-on-light"
+                    }`}
                   />
+                  {errors.nombre && <p className="text-red-500 text-xs mt-1 ml-2">{errors.nombre}</p>}
                 </div>
 
                 {/* Campo: Nombre de usuario */}
@@ -58,13 +147,17 @@ export default function Register() {
                     type="text"
                     id="nombreUsuario"
                     name="nombreUsuario"
-                    className="w-full px-4 py-2.5 border border-border-muted-on-light rounded-full focus:ring-text-accent focus:border-text-accent text-foreground-on-light"
+                    value={formData.nombreUsuario}
+                    onChange={handleChange}
+                    className={`w-full px-4 py-2.5 border rounded-full focus:ring-text-accent focus:border-text-accent text-foreground-on-light ${
+                      errors.nombreUsuario ? "border-red-500" : "border-border-muted-on-light"
+                    }`}
                   />
+                  {errors.nombreUsuario && <p className="text-red-500 text-xs mt-1 ml-2">{errors.nombreUsuario}</p>}
                 </div>
 
-                {/* Fecha de nacimiento y Género en la misma fila */}
+                {/* Fecha de nacimiento y Género */}
                 <div className="grid grid-cols-2 gap-4 mb-5">
-                  {/* Campo: Fecha de nacimiento */}
                   <div>
                     <label htmlFor="fechaNacimiento" className="block text-sm font-medium text-foreground-on-light">
                       Fecha de nacimiento
@@ -73,11 +166,15 @@ export default function Register() {
                       type="date"
                       id="fechaNacimiento"
                       name="fechaNacimiento"
-                      className="w-full px-4 py-2.5 border border-border-muted-on-light rounded-full focus:ring-text-accent focus:border-text-accent text-foreground-on-light"
+                      value={formData.fechaNacimiento}
+                      onChange={handleChange}
+                      className={`w-full px-4 py-2.5 border rounded-full focus:ring-text-accent focus:border-text-accent text-foreground-on-light ${
+                        errors.fechaNacimiento ? "border-red-500" : "border-border-muted-on-light"
+                      }`}
                     />
+                    {errors.fechaNacimiento && <p className="text-red-500 text-xs mt-1">{errors.fechaNacimiento}</p>}
                   </div>
 
-                  {/* Campo: Género */}
                   <div>
                     <label htmlFor="genero" className="block text-sm font-medium text-foreground-on-light">
                       Género
@@ -85,7 +182,11 @@ export default function Register() {
                     <select
                       id="genero"
                       name="genero"
-                      className="w-full px-4 py-2.5 border border-border-muted-on-light rounded-full focus:ring-text-accent focus:border-text-accent text-foreground-on-light"
+                      value={formData.genero}
+                      onChange={handleChange}
+                      className={`w-full px-4 py-2.5 border rounded-full focus:ring-text-accent focus:border-text-accent text-foreground-on-light ${
+                        errors.genero ? "border-red-500" : "border-border-muted-on-light"
+                      }`}
                     >
                       <option value="">Seleccionar</option>
                       <option value="masculino">Masculino</option>
@@ -93,6 +194,7 @@ export default function Register() {
                       <option value="no binario">No binario</option>
                       <option value="prefiero-no-decir">Prefiero no decir</option>
                     </select>
+                    {errors.genero && <p className="text-red-500 text-xs mt-1">{errors.genero}</p>}
                   </div>
                 </div>
 
@@ -104,13 +206,18 @@ export default function Register() {
                   <select
                     id="rol"
                     name="rol"
-                    className="w-full px-4 py-2.5 border border-border-muted-on-light rounded-full focus:ring-text-accent focus:border-text-accent text-foreground-on-light"
+                    value={formData.rol}
+                    onChange={handleChange}
+                    className={`w-full px-4 py-2.5 border rounded-full focus:ring-text-accent focus:border-text-accent text-foreground-on-light ${
+                      errors.rol ? "border-red-500" : "border-border-muted-on-light"
+                    }`}
                   >
                     <option value="seleccionar">Seleccionar</option>
                     <option value="investigador">Investigador/a</option>
                     <option value="organización">Organización</option>
                     <option value="otro">Otro</option>
                   </select>
+                  {errors.rol && <p className="text-red-500 text-xs mt-1 ml-2">{errors.rol}</p>}
                 </div>
 
                 {/* Campo: Correo */}
@@ -122,8 +229,13 @@ export default function Register() {
                     type="email"
                     id="correo"
                     name="correo"
-                    className="w-full px-4 py-2.5 border border-border-muted-on-light rounded-full focus:ring-text-accent focus:border-text-accent text-foreground-on-light"
+                    value={formData.correo}
+                    onChange={handleChange}
+                    className={`w-full px-4 py-2.5 border rounded-full focus:ring-text-accent focus:border-text-accent text-foreground-on-light ${
+                      errors.correo ? "border-red-500" : "border-border-muted-on-light"
+                    }`}
                   />
+                  {errors.correo && <p className="text-red-500 text-xs mt-1 ml-2">{errors.correo}</p>}
                 </div>
 
                 {/* Campo: Contraseña */}
@@ -136,7 +248,11 @@ export default function Register() {
                       type={showPassword ? "text" : "password"}
                       id="contrasena"
                       name="contrasena"
-                      className="w-full px-4 py-2.5 pr-12 border border-border-muted-on-light rounded-full focus:ring-text-accent focus:border-text-accent text-foreground-on-light"
+                      value={formData.contrasena}
+                      onChange={handleChange}
+                      className={`w-full px-4 py-2.5 pr-12 border rounded-full focus:ring-text-accent focus:border-text-accent text-foreground-on-light ${
+                        errors.contrasena ? "border-red-500" : "border-border-muted-on-light"
+                      }`}
                     />
                     <button
                       type="button"
@@ -146,8 +262,25 @@ export default function Register() {
                       {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
                     </button>
                   </div>
+                  {errors.contrasena && <p className="text-red-500 text-xs mt-1 ml-2">{errors.contrasena}</p>}
                 </div>
-
+                {/* Campo: Confirmar Contraseña */}
+                <div className="mb-6">
+                  <label htmlFor="confirmarContrasena" className="block text-sm font-medium text-foreground-on-light">
+                    Confirmar Contraseña
+                  </label>
+                  <input
+                    type="password"
+                    id="confirmarContrasena"
+                    name="confirmarContrasena" // Importante: debe coincidir con el estado
+                    value={formData.confirmarContrasena}
+                    onChange={handleChange}
+                    className={`w-full px-4 py-2.5 border rounded-full focus:ring-text-accent focus:border-text-accent text-foreground-on-light ${
+                      errors.confirmarContrasena ? "border-red-500" : "border-border-muted-on-light"
+                    }`}
+                  />
+                  {errors.confirmarContrasena && <p className="text-red-500 text-xs mt-1 ml-2">{errors.confirmarContrasena}</p>}
+                </div>
                 {/* Botones */}
                 <button
                   type="submit"
@@ -156,13 +289,15 @@ export default function Register() {
                   Registrarse
                 </button>
                 <button
+                  type="button"
                   onClick={closeModal}
                   className="block w-full text-center text-link-on-light hover:text-text-muted-on-light transition-colors mt-4"
                 >
                   Iniciar sesión
                 </button>
               </div>
-              {/*Footer con texto y links */}
+              
+              {/*Footer */}
               <div className="text-center z-50" onClick={(e) => e.stopPropagation()}>
                 <p className="text-foreground font-medium">Todas tus noticias. Unificadas.</p>
                 <div className="flex items-center justify-center gap-2 text-sm">
@@ -175,7 +310,7 @@ export default function Register() {
                   </a>
                 </div>
               </div>
-            </div>
+            </form>
           </motion.div>
         )}
       </AnimatePresence>
