@@ -1,6 +1,6 @@
 "use client";
 import { useState } from "react";
-import BarCollection from "@/components/BarCollection";
+import ContentHeader from "@/components/ContentHeader";
 import Pagination from "@/components/Pagination";
 
 export default function News() {
@@ -13,7 +13,7 @@ export default function News() {
 
   return (
     <div className="w-full">
-      <BarCollection collectionTitle="Lorem Ipsum" />
+      <ContentHeader firstLine="Catálogo" secondLine="de noticias" />
 
       {/* Aquí iran las tarjetas de noticias */}
 
