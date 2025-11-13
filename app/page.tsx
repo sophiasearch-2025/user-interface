@@ -1,6 +1,7 @@
 import { Carousel } from "@/components";
 import Register from "@/components/Register";
 import Search from "@/components/Search";
+import Title from "@/components/Title";
 import { isAuthenticated } from "@/lib/session";
 
 export default async function Home() {
@@ -107,13 +108,7 @@ export default async function Home() {
       </div>
 
       <div className="flex flex-col gap-10">
-        <div className="flex items-center gap-4">
-          <div className="w-12 h-5 bg-surface-accent"></div>
-          <div className="flex flex-col items-baseline text-4xl ">
-            <h2 className="font-bold text-text-primary">Últimas</h2>
-            <h2 className="font-bold text-text-accent self-center">noticias añadidas</h2>
-          </div>
-        </div>
+        <Title firstLine="Últimas" secondLine="noticias añadidas" fontSize="4xl" />
 
         <Carousel items={latestNews} render="NoticeCardA" maxWidth="95vw" />
 
