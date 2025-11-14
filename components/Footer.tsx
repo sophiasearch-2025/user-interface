@@ -5,93 +5,100 @@ import Icon from "@/components/Icon";
 
 export function Footer() {
   return (
-    <footer className="w-full bg-surface-light text-text-muted-on-light text-sm py-8 mt-12">
-      <div className="container mx-auto flex flex-row justify-between">
-        <div className="container mx-auto flex-col ">
-          <div className="flex items-center gap-6">
-            <Image
-              src="/sophia_light_bg.png"
-              width={330}
-              alt="Logo"
-              height={105}
-            />
+    <footer className="w-full bg-surface-light text-text-muted-on-light text-sm py-12 mt-12">
+      <div className="container mx-auto px-6">
+        <div className="flex flex-col md:flex-row md:justify-between gap-12">
+          <div className="flex flex-col gap-4">
+            <div className="flex items-center">
+              <Image
+                src="/sophia_light_bg.png"
+                width={180}
+                height={58}
+                alt="Logo"
+                style={{ height: 'auto' }}
+              />
+            </div>
+            <div className="flex items-center gap-6 mt-2">
+              <Link
+                href="https://facebook.com/Sophia"
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="Facebook"
+                className="hover:text-link-on-light transition-colors"
+              >
+                <Icon icon={siFacebook} className="h-5 w-5" />
+              </Link>
+              <Link
+                href="https://youtube.com/Sophia"
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="Youtube"
+                className="hover:text-link-on-light transition-colors"
+              >
+                <Icon icon={siYoutube} className="h-5 w-5" />
+              </Link>
+              <Link
+                href="https://instagram.com/SophiaLT"
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="Instagram"
+                className="hover:text-link-on-light transition-colors"
+              >
+                <Icon icon={siInstagram} className="h-5 w-5" />
+              </Link>
+              <Link
+                href="https://github.com/sophiasearch-2025/"
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="GitHub"
+                className="hover:text-link-on-light transition-colors"
+              >
+                <Icon icon={siGithub} className="h-5 w-5" />
+              </Link>
+            </div>
           </div>
-          <div className="flex px-12 items-center gap-6">
-            <Link
-              href="https://facebook.com/Sophia"
-              target="_blank"
-              rel="noopener noreferrer"
-              aria-label="Facebook"
-              className="hover:text-link-on-light transition-colors"
-            >
-              <Icon icon={siFacebook} className="h-5 w-5" />
-            </Link>
-            <Link
-              href="https://youtube.com/Sophia"
-              target="_blank"
-              rel="noopener noreferrer"
-              aria-label="Youtube"
-              className="hover:text-link-on-light transition-colors"
-            >
-              <Icon icon={siYoutube} className="h-5 w-5" />
-            </Link>
-            <Link
-              href="https://instagram.com/SophiaLT"
-              target="_blank"
-              rel="noopener noreferrer"
-              aria-label="Instagram"
-              className="hover:text-link-on-light transition-colors"
-            >
-              <Icon icon={siInstagram} className="h-5 w-5" />
-            </Link>
-            <Link
-              href="https://github.com/sophiasearch-2025/"
-              target="_blank"
-              rel="noopener noreferrer"
-              aria-label="GitHub"
-              className="hover:text-link-on-light transition-colors"
-            >
-              <Icon icon={siGithub} className="h-5 w-5" />
-            </Link>
-          </div>
-        </div>
 
-        <div className="container mx-200 flex gap-32 flex-row ">
-          <div className="container gap-4 mx-auto flex flex-col ">
-            <p className="font-bold text-foreground-on-light">Principal</p>
-            <Link href="/news">
-              <button className="font-bold text-text-muted-on-light hover:text-link-on-light transition-colors">
+          <div className="flex flex-col sm:flex-row gap-10 sm:gap-16 lg:gap-24">
+            <div className="flex flex-col gap-3">
+              <p className="font-bold text-foreground-on-light">Principal</p>
+              <Link
+                href="/news"
+                className="font-bold text-text-muted-on-light hover:text-link-on-light transition-colors"
+              >
                 Catálogo
-              </button>
-            </Link>
+              </Link>
 
-            <Link href="/plans">
-              <button className="font-bold text-text-muted-on-light hover:text-link-on-light transition-colors">
+              <Link
+                href="/plans"
+                className="font-bold text-text-muted-on-light hover:text-link-on-light transition-colors"
+              >
                 Planes
-              </button>
-            </Link>
-          </div>
+              </Link>
+            </div>
 
-          <div className="container gap-4 mx-auto flex flex-col whitespace-nowrap">
-            <p className="font-bold text-foreground-on-light">Otros</p>
-
-            <Link href="/admin">
-              <button className="font-bold text-text-muted-on-light hover:text-link-on-light transition-colors">
+            <div className="flex flex-col gap-3">
+              <p className="font-bold text-foreground-on-light">Otros</p>
+              <Link
+                href="/admin"
+                className="font-bold text-text-muted-on-light hover:text-link-on-light transition-colors whitespace-nowrap"
+              >
                 Acceso administrador
-              </button>
-            </Link>
+              </Link>
 
-            <Link href="/privacy">
-              <button className="font-bold text-text-muted-on-light hover:text-link-on-light transition-colors">
+              <Link
+                href="/privacy"
+                className="font-bold text-text-muted-on-light hover:text-link-on-light transition-colors whitespace-nowrap"
+              >
                 Politica de privacidad
-              </button>
-            </Link>
+              </Link>
 
-            <Link href="/terms">
-              <button className="font-bold text-text-muted-on-light hover:text-link-on-light transition-colors">
+              <Link
+                href="/terms"
+                className="font-bold text-text-muted-on-light hover:text-link-on-light transition-colors whitespace-nowrap"
+              >
                 Términos y condiciones
-              </button>
-            </Link>
+              </Link>
+            </div>
           </div>
         </div>
       </div>
