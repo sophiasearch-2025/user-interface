@@ -1,13 +1,12 @@
 "use client";
 import { motion, AnimatePresence } from "framer-motion";
-import { Eye, EyeOff } from "lucide-react";
+import { Eye, EyeOff, X } from "lucide-react"; // Importamos el icono X
 import { useState } from "react";
 
 export default function Register() {
   const [isOpen, setIsOpen] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
 
-  // Estado para los datos del formulario
   const [formData, setFormData] = useState({
     nombre: "",
     nombreUsuario: "",
@@ -16,10 +15,9 @@ export default function Register() {
     rol: "",
     correo: "",
     contrasena: "",
-    confirmarContrasena: "",
+    aceptaTerminos: false, // <-- Feature del compañero
   });
 
-  // Estado para los errores
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
 
   const openModal = () => setIsOpen(true);
@@ -28,17 +26,15 @@ export default function Register() {
     setErrors({}); // Limpiar errores al cerrar
   };
 
-  // Función para manejar cambios en los inputs
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
-    const { name, value } = e.target;
-    
-    // Actualiza el valor del campo
+    const { name, value, type } = e.target;
+    const isCheckbox = type === 'checkbox';
+
     setFormData((prev) => ({
       ...prev,
-      [name]: value,
+      [name]: isCheckbox ? (e.target as HTMLInputElement).checked : value,
     }));
 
-    // Limpia el error de este campo si el usuario empieza a corregirlo
     if (errors[name]) {
       setErrors((prev) => {
         const newErrors = { ...prev };
@@ -48,29 +44,22 @@ export default function Register() {
     }
   };
 
-  // Función de validación y envío
   const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault(); // Evita que la página se recargue
+    e.preventDefault();
     const newErrors: { [key: string]: string } = {};
 
-
-    // Validamos campos vacíos
+    // validaciones
     if (!formData.nombre.trim()) newErrors.nombre = "El nombre es obligatorio.";
     if (!formData.nombreUsuario.trim()) newErrors.nombreUsuario = "El usuario es obligatorio.";
-    if (!formData.fechaNacimiento) newErrors.fechaNacimiento = "La fecha es obligatoria.";
     if (!formData.genero) newErrors.genero = "Selecciona un género.";
     if (!formData.rol || formData.rol === "seleccionar") newErrors.rol = "Selecciona un rol.";
-    if (!formData.contrasena) newErrors.contrasena = "La contraseña es obligatoria.";
     
-    // Validamos contraseña (mínimo 6 caracteres)
-    if (formData.contrasena && formData.contrasena.length < 6) {
+    if (!formData.contrasena) {
+      newErrors.contrasena = "La contraseña es obligatoria.";
+    } else if (formData.contrasena.length < 6) {
       newErrors.contrasena = "La contraseña debe tener al menos 6 caracteres.";
     }
-    // Validamos que las contraseñas coincidan
-    if (formData.contrasena !== formData.confirmarContrasena) {
-      newErrors.confirmarContrasena = "Las contraseñas no coinciden.";
-    }
-    // Validamos correo
+
     if (!formData.correo) {
       newErrors.correo = "El correo es obligatorio.";
     } else {
@@ -80,13 +69,35 @@ export default function Register() {
       }
     }
 
+    if (!formData.fechaNacimiento) {
+      newErrors.fechaNacimiento = "La fecha es obligatoria.";
+    } else {
+      const fechaNac = new Date(formData.fechaNacimiento);
+      const hoy = new Date();
+      let edad = hoy.getFullYear() - fechaNac.getFullYear();
+      const mes = hoy.getMonth() - fechaNac.getMonth();
 
-    // Si hay errores, los guardamos y no enviamos nada
+      if (mes < 0 || (mes === 0 && hoy.getDate() < fechaNac.getDate())) {
+        edad--;
+      }
+      if (fechaNac > hoy) {
+        newErrors.fechaNacimiento = "La fecha no puede ser futura.";
+      } else if (edad < 13) {
+        newErrors.fechaNacimiento = "Debes tener al menos 13 años.";
+      } else if (edad > 120) {
+        newErrors.fechaNacimiento = "Fecha de nacimiento inválida.";
+      }
+    }
+
+    if (!formData.aceptaTerminos) {
+      newErrors.aceptaTerminos = "Debes aceptar los términos y condiciones.";
+    }
+
     if (Object.keys(newErrors).length > 0) {
       setErrors(newErrors);
     } else {
-      console.log("Formulario Válido. Datos listos para enviar:", formData);
-      alert("Registro de usuario exitoso.");
+      console.log("Formulario Válido (Fusionado). Datos:", formData);
+      alert("¡Registro validado! (T5 Fusionada). Listo para API.");
     }
   };
 
@@ -108,196 +119,222 @@ export default function Register() {
             exit={{ opacity: 0 }}
             transition={{ duration: 0.1, ease: "easeInOut" }}
           >
-            {/* Agregamos la etiqueta <form> para manejar el submit */}
-            <form 
-              onSubmit={handleSubmit}
-              className="flex flex-col items-center gap-6"
-              onClick={(e) => e.stopPropagation()} 
-            >
-              <div
-                className="bg-surface-light z-50 p-10 rounded-2xl shadow-lg max-w-lg w-full max-h-[90vh] overflow-y-auto"
+            <div className="flex flex-col items-center gap-6">
+              <motion.div
+                className="bg-surface-light z-50 p-10 rounded-2xl shadow-lg w-lg max-w-lg max-h-[90vh] overflow-y-auto relative" // Estilo del compañero
+                onClick={(e) => e.stopPropagation()}
+                initial={{ opacity: 0, scale: 0.95 }}
+                animate={{ opacity: 1, scale: 1 }}
+                exit={{ opacity: 0, scale: 0.95 }}
+                transition={{ duration: 0.2, ease: "easeOut" }}
               >
+                {/* Botón cerrar */}
+                <button
+                  onClick={closeModal}
+                  className="absolute top-4 right-4 text-text-muted-on-light hover:text-foreground-on-light transition-colors"
+                >
+                  <X className="w-6 h-6" />
+                </button>
+
                 <h2 className="text-3xl font-bold text-text-accent mb-2">Registrarse</h2>
-                <p className="text-text-muted-on-light mb-8">Para unirse a cientos de investigadores</p>
+                <p className="text-text-muted-on-light mb-8">
+                  Para unirse a cientos de investigadores
+                </p>
 
-                {/* Campo: Nombre */}
-                <div className="mb-5">
-                  <label htmlFor="nombre" className="block text-sm font-medium text-foreground-on-light">
-                    Nombre
-                  </label>
-                  <input
-                    type="text"
-                    id="nombre"
-                    name="nombre"
-                    value={formData.nombre}
-                    onChange={handleChange}
-                    className={`w-full px-4 py-2.5 border rounded-full focus:ring-text-accent focus:border-text-accent text-foreground-on-light ${
-                      errors.nombre ? "border-red-500" : "border-border-muted-on-light"
-                    }`}
-                  />
-                  {errors.nombre && <p className="text-red-500 text-xs mt-1 ml-2">{errors.nombre}</p>}
-                </div>
-
-                {/* Campo: Nombre de usuario */}
-                <div className="mb-5">
-                  <label htmlFor="nombreUsuario" className="block text-sm font-medium text-foreground-on-light">
-                    Nombre de usuario
-                  </label>
-                  <input
-                    type="text"
-                    id="nombreUsuario"
-                    name="nombreUsuario"
-                    value={formData.nombreUsuario}
-                    onChange={handleChange}
-                    className={`w-full px-4 py-2.5 border rounded-full focus:ring-text-accent focus:border-text-accent text-foreground-on-light ${
-                      errors.nombreUsuario ? "border-red-500" : "border-border-muted-on-light"
-                    }`}
-                  />
-                  {errors.nombreUsuario && <p className="text-red-500 text-xs mt-1 ml-2">{errors.nombreUsuario}</p>}
-                </div>
-
-                {/* Fecha de nacimiento y Género */}
-                <div className="grid grid-cols-2 gap-4 mb-5">
-                  <div>
-                    <label htmlFor="fechaNacimiento" className="block text-sm font-medium text-foreground-on-light">
-                      Fecha de nacimiento
+                {/*<form> */}
+                <form onSubmit={handleSubmit}>
+                  
+                  {/* Nombre */}
+                  <div className="mb-5">
+                    <label htmlFor="nombre" className="block text-sm font-medium text-foreground-on-light">
+                      Nombre
                     </label>
                     <input
-                      type="date"
-                      id="fechaNacimiento"
-                      name="fechaNacimiento"
-                      value={formData.fechaNacimiento}
+                      type="text"
+                      id="nombre"
+                      name="nombre"
+                      value={formData.nombre}
                       onChange={handleChange}
-                      className={`w-full px-4 py-2.5 border rounded-full focus:ring-text-accent focus:border-text-accent text-foreground-on-light ${
-                        errors.fechaNacimiento ? "border-red-500" : "border-border-muted-on-light"
+                      className={`w-full px-4 h-11 border rounded-full focus:ring-text-accent focus:border-text-accent text-foreground-on-light ${
+                        errors.nombre ? "border-text-danger" : "border-border-muted-on-light"
                       }`}
                     />
-                    {errors.fechaNacimiento && <p className="text-red-500 text-xs mt-1">{errors.fechaNacimiento}</p>}
+                    {errors.nombre && <p className="text-text-danger text-sm font-medium mt-1">{errors.nombre}</p>}
                   </div>
 
-                  <div>
-                    <label htmlFor="genero" className="block text-sm font-medium text-foreground-on-light">
-                      Género
+                  {/*Nombre de usuario */}
+                  <div className="mb-5">
+                    <label htmlFor="nombreUsuario" className="block text-sm font-medium text-foreground-on-light">
+                      Nombre de usuario
+                    </label>
+                    <input
+                      type="text"
+                      id="nombreUsuario"
+                      name="nombreUsuario"
+                      value={formData.nombreUsuario}
+                      onChange={handleChange}
+                      className={`w-full px-4 h-11 border rounded-full focus:ring-text-accent focus:border-text-accent text-foreground-on-light ${
+                        errors.nombreUsuario ? "border-text-danger" : "border-border-muted-on-light"
+                      }`}
+                    />
+                    {errors.nombreUsuario && <p className="text-text-danger text-sm font-medium mt-1">{errors.nombreUsuario}</p>}
+                  </div>
+
+                  {/* Fecha de nacimiento y Género */}
+                  <div className="grid grid-cols-2 gap-4 mb-5">
+                    <div>
+                      <label htmlFor="fechaNacimiento" className="block text-sm font-medium text-foreground-on-light">
+                        Fecha de nacimiento
+                      </label>
+                      <input
+                        type="date"
+                        id="fechaNacimiento"
+                        name="fechaNacimiento"
+                        value={formData.fechaNacimiento}
+                        onChange={handleChange}
+                        max={new Date().toISOString().split("T")[0]} // Buena idea del compañero
+                        className={`w-full px-4 h-11 border rounded-full focus:ring-text-accent focus:border-text-accent text-foreground-on-light ${
+                          errors.fechaNacimiento ? "border-text-danger" : "border-border-muted-on-light"
+                        }`}
+                      />
+                      {/* Mensaje de error de fecha */}
+                    </div>
+
+                    <div>
+                      <label htmlFor="genero" className="block text-sm font-medium text-foreground-on-light">
+                        Género
+                      </label>
+                      <select
+                        id="genero"
+                        name="genero"
+                        value={formData.genero}
+                        onChange={handleChange}
+                        className={`w-full px-4 h-11 border rounded-full focus:ring-text-accent focus:border-text-accent text-foreground-on-light ${
+                          errors.genero ? "border-text-danger" : "border-border-muted-on-light"
+                        }`}
+                      >
+                        <option value="">Seleccionar</option>
+                        <option value="masculino">Masculino</option>
+                        <option value="femenino">Femenino</option>
+                        <option value="no binario">No binario</option>
+                        <option value="prefiero-no-decir">Prefiero no decir</option>
+                      </select>
+                      {/* Mensaje de error de genero */}
+                    </div>
+                  </div>
+                  
+                  {/* Contenedor unificado para errores de Fecha y Género */}
+                  {(errors.fechaNacimiento || errors.genero) && (
+                    <div className="mb-5 -mt-4">
+                      {errors.fechaNacimiento && <p className="text-text-danger text-sm font-medium">{errors.fechaNacimiento}</p>}
+                      {errors.genero && <p className="text-text-danger text-sm font-medium">{errors.genero}</p>}
+                    </div>
+                  )}
+
+                  {/* Rol */}
+                  <div className="mb-5">
+                    <label htmlFor="rol" className="block text-sm font-medium text-foreground-on-light">
+                      Rol
                     </label>
                     <select
-                      id="genero"
-                      name="genero"
-                      value={formData.genero}
+                      id="rol"
+                      name="rol"
+                      value={formData.rol}
                       onChange={handleChange}
-                      className={`w-full px-4 py-2.5 border rounded-full focus:ring-text-accent focus:border-text-accent text-foreground-on-light ${
-                        errors.genero ? "border-red-500" : "border-border-muted-on-light"
+                      className={`w-full px-4 h-11 border rounded-full focus:ring-text-accent focus:border-text-accent text-foreground-on-light ${
+                        errors.rol ? "border-text-danger" : "border-border-muted-on-light"
                       }`}
                     >
-                      <option value="">Seleccionar</option>
-                      <option value="masculino">Masculino</option>
-                      <option value="femenino">Femenino</option>
-                      <option value="no binario">No binario</option>
-                      <option value="prefiero-no-decir">Prefiero no decir</option>
+                      <option value="seleccionar">Seleccionar</option>
+                      <option value="investigador">Investigador/a</option>
+                      <option value="organización">Organización</option>
+                      <option value="otro">Otro</option>
                     </select>
-                    {errors.genero && <p className="text-red-500 text-xs mt-1">{errors.genero}</p>}
+                    {errors.rol && <p className="text-text-danger text-sm font-medium mt-1">{errors.rol}</p>}
                   </div>
-                </div>
 
-                {/* Campo: Rol */}
-                <div className="mb-5">
-                  <label htmlFor="rol" className="block text-sm font-medium text-foreground-on-light">
-                    Rol
-                  </label>
-                  <select
-                    id="rol"
-                    name="rol"
-                    value={formData.rol}
-                    onChange={handleChange}
-                    className={`w-full px-4 py-2.5 border rounded-full focus:ring-text-accent focus:border-text-accent text-foreground-on-light ${
-                      errors.rol ? "border-red-500" : "border-border-muted-on-light"
-                    }`}
-                  >
-                    <option value="seleccionar">Seleccionar</option>
-                    <option value="investigador">Investigador/a</option>
-                    <option value="organización">Organización</option>
-                    <option value="otro">Otro</option>
-                  </select>
-                  {errors.rol && <p className="text-red-500 text-xs mt-1 ml-2">{errors.rol}</p>}
-                </div>
-
-                {/* Campo: Correo */}
-                <div className="mb-5">
-                  <label htmlFor="correo" className="block text-sm font-medium text-foreground-on-light">
-                    Correo
-                  </label>
-                  <input
-                    type="email"
-                    id="correo"
-                    name="correo"
-                    value={formData.correo}
-                    onChange={handleChange}
-                    className={`w-full px-4 py-2.5 border rounded-full focus:ring-text-accent focus:border-text-accent text-foreground-on-light ${
-                      errors.correo ? "border-red-500" : "border-border-muted-on-light"
-                    }`}
-                  />
-                  {errors.correo && <p className="text-red-500 text-xs mt-1 ml-2">{errors.correo}</p>}
-                </div>
-
-                {/* Campo: Contraseña */}
-                <div className="mb-6">
-                  <label htmlFor="contrasena" className="block text-sm font-medium text-foreground-on-light">
-                    Contraseña
-                  </label>
-                  <div className="relative">
+                  {/* Correo */}
+                  <div className="mb-5">
+                    <label htmlFor="correo" className="block text-sm font-medium text-foreground-on-light">
+                      Correo
+                    </label>
                     <input
-                      type={showPassword ? "text" : "password"}
-                      id="contrasena"
-                      name="contrasena"
-                      value={formData.contrasena}
+                      type="email"
+                      id="correo"
+                      name="correo"
+                      value={formData.correo}
                       onChange={handleChange}
-                      className={`w-full px-4 py-2.5 pr-12 border rounded-full focus:ring-text-accent focus:border-text-accent text-foreground-on-light ${
-                        errors.contrasena ? "border-red-500" : "border-border-muted-on-light"
+                      className={`w-full px-4 h-11 border rounded-full focus:ring-text-accent focus:border-text-accent text-foreground-on-light ${
+                        errors.correo ? "border-text-danger" : "border-border-muted-on-light"
                       }`}
                     />
-                    <button
-                      type="button"
-                      onClick={() => setShowPassword(!showPassword)}
-                      className="absolute right-3 top-1/2 -translate-y-1/2 text-text-muted-on-light hover:text-foreground-on-light transition-colors"
-                    >
-                      {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
-                    </button>
+                    {errors.correo && <p className="text-text-danger text-sm font-medium mt-1 h-5">{errors.correo}</p>}
                   </div>
-                  {errors.contrasena && <p className="text-red-500 text-xs mt-1 ml-2">{errors.contrasena}</p>}
-                </div>
-                {/* Campo: Confirmar Contraseña */}
-                <div className="mb-6">
-                  <label htmlFor="confirmarContrasena" className="block text-sm font-medium text-foreground-on-light">
-                    Confirmar Contraseña
+
+                  {/* Contraseña */}
+                  <div className="mb-6">
+                    <label htmlFor="contrasena" className="block text-sm font-medium text-foreground-on-light">
+                      Contraseña
+                    </label>
+                    <div className="relative">
+                      <input
+                        type={showPassword ? "text" : "password"}
+                        id="contrasena"
+                        name="contrasena"
+                        value={formData.contrasena}
+                        onChange={handleChange}
+                        className={`w-full px-4 h-11 pr-12 border rounded-full focus:ring-text-accent focus:border-text-accent text-foreground-on-light ${
+                          errors.contrasena ? "border-text-danger" : "border-border-muted-on-light"
+                        }`}
+                      />
+                      <button
+                        type="button"
+                        onClick={() => setShowPassword(!showPassword)}
+                        className="absolute right-3 top-1/2 -translate-y-1/2 text-text-muted-on-light hover:text-foreground-on-light transition-colors"
+                      >
+                        {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+                      </button>
+                    </div>
+                    {errors.contrasena && <p className="text-text-danger text-sm font-medium mt-1">{errors.contrasena}</p>}
+                  </div>
+
+                  {/* Terminos y condiciones */}
+                  <label className="flex items-center cursor-pointer gap-2 mb-5 mt-4">
+                    <input
+                      type="checkbox"
+                      id="aceptaTerminos"
+                      name="aceptaTerminos"
+                      checked={formData.aceptaTerminos}
+                      onChange={handleChange}
+                      className="peer hidden"
+                    />
+                    <div className={`h-5 w-5 rounded-full border-2 transition-colors ${errors.aceptaTerminos ? 'border-text-danger' : 'border-border-muted-on-light'} peer-checked:bg-text-accent`}
+                    ></div>
+                    <span className="text-sm text-foreground-on-light">
+                      Acepto los términos, condiciones y la política de privacidad
+                    </span>
                   </label>
-                  <input
-                    type="password"
-                    id="confirmarContrasena"
-                    name="confirmarContrasena" // Importante: debe coincidir con el estado
-                    value={formData.confirmarContrasena}
-                    onChange={handleChange}
-                    className={`w-full px-4 py-2.5 border rounded-full focus:ring-text-accent focus:border-text-accent text-foreground-on-light ${
-                      errors.confirmarContrasena ? "border-red-500" : "border-border-muted-on-light"
-                    }`}
-                  />
-                  {errors.confirmarContrasena && <p className="text-red-500 text-xs mt-1 ml-2">{errors.confirmarContrasena}</p>}
-                </div>
-                {/* Botones */}
-                <button
-                  type="submit"
-                  className="w-full bg-btn-primary-bg text-btn-primary-text font-bold py-3 px-4 rounded-full hover:bg-btn-primary-bg/70 transition-colors mt-6"
-                >
-                  Registrarse
-                </button>
-                <button
-                  type="button"
-                  onClick={closeModal}
-                  className="block w-full text-center text-link-on-light hover:text-text-muted-on-light transition-colors mt-4"
-                >
-                  Iniciar sesión
-                </button>
-              </div>
-              
-              {/*Footer */}
+                  {errors.aceptaTerminos && <p className="text-text-danger text-sm font-medium -mt-4 mb-4">{errors.aceptaTerminos}</p>}
+
+
+                  {/* Botones */}
+                  <button
+                    type="submit"
+                    className="w-full bg-btn-primary-bg text-btn-primary-text font-bold py-3 px-4 rounded-full hover:bg-btn-primary-bg/70 transition-colors"
+                  >
+                    Registrarse
+                  </button>
+                  <button
+                    type="button" 
+                    onClick={closeModal}
+                    className="block w-full text-center text-link-on-light hover:text-text-muted-on-light transition-colors mt-4"
+                  >
+                    Iniciar sesión
+                  </button>
+                </form>
+
+              </motion.div>
+              {/* Footer */}
               <div className="text-center z-50" onClick={(e) => e.stopPropagation()}>
                 <p className="text-foreground font-medium">Todas tus noticias. Unificadas.</p>
                 <div className="flex items-center justify-center gap-2 text-sm">
@@ -310,7 +347,7 @@ export default function Register() {
                   </a>
                 </div>
               </div>
-            </form>
+            </div>
           </motion.div>
         )}
       </AnimatePresence>
