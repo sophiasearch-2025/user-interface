@@ -4,14 +4,22 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Eye, EyeOff } from "lucide-react";
 import { X } from "lucide-react";
 
-export default function Login() {
-  const [isOpen, setIsOpen] = useState(true);
+type LoginProps = {
+  isOpen: boolean;
+  onOpen: () => void;
+  onClose: () => void;
+  onSwitch: () => void;
+  className?: string;
+};
+
+export default function Login({ isOpen, onOpen, onClose, onSwitch, className }: LoginProps) {
   const [showPassword, setShowPassword] = useState(false);
   const [correo, setCorreo] = useState("");
   const [errorCorreo, setErrorCorreo] = useState("");
+  const [aceptaSesionIniciada, setAceptaSesion] = useState(false);
 
-  const openModal = () => setIsOpen(true);
-  const closeModal = () => setIsOpen(false);
+  const openModal = () => onOpen();
+  const closeModal = () => onClose();
 
   const handleCorreoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
@@ -34,14 +42,14 @@ export default function Login() {
       alert("Por favor, corrige los errores antes de continuar.");
       return;
     }
-    alert("¡Te has registrado correctamente!");
+    alert("¡Has iniciado sesión correctamente!");
   };
 
   return (
     <>
       <button
         onClick={openModal}
-        className="font-bold bg-transparent text-link-active  transition-colors hover:text-link-hover"
+        className={`font-bold bg-transparent text-link-active  transition-colors hover:text-link-hover ${className}`}
       >
         Iniciar sesión
       </button>
@@ -70,13 +78,20 @@ export default function Login() {
                 >
                   <X className="w-6 h-6" />
                 </button>
-                <h2 className="text-3xl font-bold text-text-accent mb-2">Iniciar sesión</h2>
-                <p className="text-text-muted-on-light mb-8">Para acceder a las funcionalidades</p>
+                <h2 className="text-3xl font-bold text-text-accent mb-2">
+                  Iniciar sesión
+                </h2>
+                <p className="text-text-muted-on-light mb-8">
+                  Para acceder a las funcionalidades
+                </p>
 
                 <form onSubmit={handleSubmit}>
                   {/* Campo: Correo o nombre de usuario */}
                   <div className="mb-5">
-                    <label htmlFor="correo" className="block text-sm font-medium text-foreground-on-light">
+                    <label
+                      htmlFor="correo"
+                      className="block text-sm font-medium text-foreground-on-light"
+                    >
                       Correo
                     </label>
 
@@ -87,12 +102,16 @@ export default function Login() {
                       value={correo}
                       onChange={handleCorreoChange}
                       className={`w-full px-4 py-2.5 border rounded-full focus:ring-text-accent focus:border-text-accent text-foreground-on-light ${
-                        errorCorreo ? "border-text-danger" : "border-border-muted-on-light"
+                        errorCorreo
+                          ? "border-text-danger"
+                          : "border-border-muted-on-light"
                       }`}
                     />
 
                     {errorCorreo && (
-                      <p className={`text-text-danger text-sm font-medium mt-1 h-5 ${!errorCorreo ? "invisible" : ""}`}>
+                      <p
+                        className={`text-text-danger text-sm font-medium mt-1 h-5 ${!errorCorreo ? "invisible" : ""}`}
+                      >
                         {errorCorreo}
                       </p>
                     )}
@@ -100,7 +119,10 @@ export default function Login() {
 
                   {/* Campo: Contraseña */}
                   <div className="mb-6">
-                    <label htmlFor="contrasena" className="block text-sm font-medium text-[#1d1d1b]">
+                    <label
+                      htmlFor="contrasena"
+                      className="block text-sm font-medium text-[#1d1d1b]"
+                    >
                       Contraseña
                     </label>
                     <div className="relative">
@@ -115,10 +137,36 @@ export default function Login() {
                         onClick={() => setShowPassword(!showPassword)}
                         className="absolute right-3 top-1/2 -translate-y-1/2 text-text-muted-on-light hover:text-foreground-on-light transition-colors"
                       >
-                        {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+                        {showPassword ? (
+                          <EyeOff className="w-5 h-5" />
+                        ) : (
+                          <Eye className="w-5 h-5" />
+                        )}
                       </button>
                     </div>
                   </div>
+
+                  <label className="flex items-center cursor-pointer gap-1 mb-5 mt-4">
+                    <input
+                      type="checkbox"
+                      className="peer hidden"
+                      checked={aceptaSesionIniciada}
+                      onChange={(e) => setAceptaSesion(e.target.checked)}
+                    />
+
+                    {/* Círculo */}
+                    <div
+                      className="
+                        h-5 w-5 rounded-full border-2 border-border-muted-on-light
+                        peer-checked:bg-text-accent
+                        transition-colors
+                    "
+                    ></div>
+
+                    <span className="text-sm text-foreground-on-light">
+                      Mantener mi sesión iniciada
+                    </span>
+                  </label>
 
                   {/* Botones */}
                   <button
@@ -130,21 +178,32 @@ export default function Login() {
                 </form>
 
                 <button
-                  onClick={closeModal}
+                  onClick={onSwitch}
                   className="block w-full text-center text-link-on-light hover:text-text-muted-on-light transition-colors mt-4"
                 >
                   Registrarse
                 </button>
               </motion.div>
               {/* Footer con texto y links (simplificado) */}
-              <div className="text-center z-50" onClick={(e) => e.stopPropagation()}>
-                <p className="text-foreground font-medium">Todas tus noticias. Unificadas.</p>
+              <div
+                className="text-center z-50"
+                onClick={(e) => e.stopPropagation()}
+              >
+                <p className="text-foreground font-medium">
+                  Todas tus noticias. Unificadas.
+                </p>
                 <div className="flex items-center justify-center gap-2 text-sm">
-                  <a href="/terminos" className="text-link-active hover:text-link-hover transition-colors">
+                  <a
+                    href="/terminos"
+                    className="text-link-active hover:text-link-hover transition-colors"
+                  >
                     Terminos y condiciones
                   </a>
                   <span className="text-foreground">|</span>
-                  <a href="/privacidad" className="text-link-active hover:text-link-hover transition-colors">
+                  <a
+                    href="/privacidad"
+                    className="text-link-active hover:text-link-hover transition-colors"
+                  >
                     Politica de privacidad
                   </a>
                 </div>
