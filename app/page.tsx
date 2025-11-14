@@ -1,6 +1,6 @@
 import { Carousel } from "@/components";
 import Register from "@/components/Register";
-import Search from "@/components/Search";
+import Search from "@/components/SearchBar";
 import Title from "@/components/Title";
 import { isAuthenticated } from "@/lib/session";
 
@@ -37,7 +37,8 @@ export default async function Home() {
       sourceName: "Ciencia Moderna",
       dateISO: new Date("2025-11-06"),
       caption: "Por Dr. Luis Fernández",
-      title: "Avance significativo en energías renovables podría cambiar el futuro",
+      title:
+        "Avance significativo en energías renovables podría cambiar el futuro",
       description:
         "Investigadores desarrollan nuevas células solares con eficiencia récord del 47%, duplicando la capacidad de generación actual.",
       ctaHref: "https://example.com/noticia-4",
@@ -48,8 +49,10 @@ export default async function Home() {
       sourceName: "La Tercera",
       dateISO: "2024-05-11",
       caption: "Por Qué Pasa",
-      title: "Fósiles chilenos aportan evidencia clave sobre cambios climáticos históricos",
-      description: "Investigación de la U. Austral de Chile con múltiples autores y campañas de terreno.",
+      title:
+        "Fósiles chilenos aportan evidencia clave sobre cambios climáticos históricos",
+      description:
+        "Investigación de la U. Austral de Chile con múltiples autores y campañas de terreno.",
       ctaHref: "#",
     },
     {
@@ -59,7 +62,8 @@ export default async function Home() {
       dateISO: "2024-11-03",
       caption: "Tecnología",
       title: "IA aplicada en diagnóstico clínico",
-      description: "Hospitales chilenos integran flujos de IA para soporte de decisiones.",
+      description:
+        "Hospitales chilenos integran flujos de IA para soporte de decisiones.",
       ctaHref: "#",
     },
     {
@@ -69,7 +73,8 @@ export default async function Home() {
       dateISO: "2025-01-22",
       caption: "Deportes",
       title: "Nuevos modelos de rendimiento",
-      description: "Análisis cuantitativo de cargas y recuperación en alto rendimiento.",
+      description:
+        "Análisis cuantitativo de cargas y recuperación en alto rendimiento.",
       ctaHref: "#",
     },
     {
@@ -79,7 +84,8 @@ export default async function Home() {
       dateISO: "2025-02-10",
       caption: "Ciencia",
       title: "Telescopios y materia oscura",
-      description: "Nuevas campañas observacionales refinan parámetros cosmológicos.",
+      description:
+        "Nuevas campañas observacionales refinan parámetros cosmológicos.",
       ctaHref: "#",
     },
   ];
@@ -88,14 +94,20 @@ export default async function Home() {
     <div className="w-full">
       <div className="flex flex-col items-center justify-center p-10 gap-6">
         <div className="flex flex-col items-center justify-center gap-3">
-          <h1 className="tracking-wider text-6xl font-bold">Todas tus noticias</h1>
-          <h1 className="tracking-widest text-6xl font-bold text-text-accent">UNIFICADAS</h1>
+          <h1 className="tracking-wider text-6xl font-bold">
+            Todas tus noticias
+          </h1>
+          <h1 className="tracking-widest text-6xl font-bold text-text-accent">
+            UNIFICADAS
+          </h1>
         </div>
 
         <Search />
 
         <div className="flex flex-col items-center justify-center gap-3">
-          <h3 className="text-xl font-medium">Descubre la magia de la IA aplicada a tus investigaciones.</h3>
+          <h3 className="text-xl font-medium">
+            Descubre la magia de la IA aplicada a tus investigaciones.
+          </h3>
 
           <div className="flex items-center justify-center gap-4">
             {!(await isAuthenticated()) && <Register />}

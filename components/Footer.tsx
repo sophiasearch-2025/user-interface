@@ -9,7 +9,12 @@ export function Footer() {
       <div className="container mx-auto flex flex-row justify-between">
         <div className="container mx-auto flex-col ">
           <div className="flex items-center gap-6">
-            <Image src="/sophia_light_bg.png" width={330} alt="Logo" height={105} />
+            <Image
+              src="/sophia_light_bg.png"
+              width={330}
+              alt="Logo"
+              height={105}
+            />
           </div>
           <div className="flex px-12 items-center gap-6">
             <Link
