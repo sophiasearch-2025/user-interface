@@ -87,7 +87,7 @@ export default function Login() {
                       value={correo}
                       onChange={handleCorreoChange}
                       className={`w-full px-4 py-2.5 border rounded-full focus:ring-text-accent focus:border-text-accent text-foreground-on-light ${
-                        errorCorreo ? "border-primary" : "border-border-muted-on-light"
+                        errorCorreo ? "border-text-danger" : "border-border-muted-on-light"
                       }`}
                     />
 

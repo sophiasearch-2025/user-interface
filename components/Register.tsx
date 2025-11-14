@@ -143,7 +143,7 @@ export default function Register() {
                           onChange={handleFechaChange}
                           max={new Date().toISOString().split("T")[0]}
                           className={`w-full px-4 h-11 border rounded-full focus:ring-text-accent focus:border-text-accent text-foreground-on-light ${
-                            errorFecha ? "border-red" : "border-border-muted-on-light"
+                            errorFecha ? "border-text-danger" : "border-border-muted-on-light"
                           }`}
                         />
                       </div>
@@ -198,7 +198,7 @@ export default function Register() {
                       value={correo}
                       onChange={handleCorreoChange}
                       className={`w-full px-4 h-11 border rounded-full focus:ring-text-accent focus:border-text-accent text-foreground-on-light ${
-                        errorCorreo ? "border-primary" : "border-border-muted-on-light"
+                        errorCorreo ? "border-text-danger" : "border-border-muted-on-light"
                       }`}
                     />
 
