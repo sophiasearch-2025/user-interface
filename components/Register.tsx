@@ -271,6 +271,7 @@ export default function Register({ isOpen, onOpen, onClose, onSwitch, className 
 
                   <button
                     onClick={onSwitch}
+                    type="button"
                     className="block w-full text-center text-link-on-light hover:text-text-muted-on-light transition-colors mt-4"
                   >
                     Iniciar sesión
