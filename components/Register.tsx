@@ -33,11 +33,11 @@ export default function Register() {
     const edadFinal = mes < 0 || (mes === 0 && dia < 0) ? edad - 1 : edad;
 
     if (fechaNac > hoy) {
-      setErrorFecha("Fecha de nacimiento inválida");
+      setErrorFecha("Fecha de nacimiento inválida.");
     } else if (edadFinal < 13) {
       setErrorFecha("Debes tener al menos 13 años para registrarte."); //No se si es necesario un mínimo de edad
     } else if (edadFinal > 120) {
-      setErrorFecha("Fecha de nacimiento inválida");
+      setErrorFecha("Fecha de nacimiento inválida.");
     } else {
       setErrorFecha("");
     }
@@ -88,7 +88,7 @@ export default function Register() {
           >
             <div className="flex flex-col items-center gap-6">
               <motion.div
-                className="bg-surface-light z-50 p-10 rounded-2xl shadow-lg max-w-2xl w-full max-h-[90vh] overflow-y-auto relative"
+                className="bg-surface-light z-50 p-10 rounded-2xl shadow-lg w-lg max-h-[90vh] overflow-y-auto relative"
                 onClick={(e) => e.stopPropagation()}
                 initial={{ opacity: 0, scale: 0.95 }}
                 animate={{ opacity: 1, scale: 1 }}
@@ -101,108 +101,83 @@ export default function Register() {
                 >
                   <X className="w-6 h-6" />
                 </button>
-                <h2 className="text-3xl font-bold text-text-accent mb-2">
-                  Registrarse
-                </h2>
-                <p className="text-text-muted-on-light mb-8">
-                  Para unirse a cientos de investigadores
-                </p>
+                <h2 className="text-3xl font-bold text-text-accent mb-2">Registrarse</h2>
+                <p className="text-text-muted-on-light mb-8">Para unirse a cientos de investigadores</p>
                 {/* Campo: Nombre */}
                 <div className="mb-5">
-                  <label
-                    htmlFor="nombre"
-                    className="block text-sm font-medium text-foreground-on-light"
-                  >
+                  <label htmlFor="nombre" className="block text-sm font-medium text-foreground-on-light">
                     Nombre
                   </label>
                   <input
                     type="text"
                     id="nombre"
                     name="nombre"
-                    className="w-full px-4 py-2.5 border border-border-muted-on-light rounded-full focus:ring-text-accent focus:border-text-accent text-foreground-on-light"
+                    className="w-full px-4 h-11 border border-border-muted-on-light rounded-full focus:ring-text-accent focus:border-text-accent text-foreground-on-light"
                   />
                 </div>
 
                 {/* Campo: Nombre de usuario */}
                 <div className="mb-5">
-                  <label
-                    htmlFor="nombreUsuario"
-                    className="block text-sm font-medium text-foreground-on-light"
-                  >
+                  <label htmlFor="nombreUsuario" className="block text-sm font-medium text-foreground-on-light">
                     Nombre de usuario
                   </label>
                   <input
                     type="text"
                     id="nombreUsuario"
                     name="nombreUsuario"
-                    className="w-full px-4 py-2.5 border border-border-muted-on-light rounded-full focus:ring-text-accent focus:border-text-accent text-foreground-on-light"
+                    className="w-full px-4 h-11 border border-border-muted-on-light rounded-full focus:ring-text-accent focus:border-text-accent text-foreground-on-light"
                   />
                 </div>
 
                 <form onSubmit={handleSubmit}>
                   {/* Fecha de nacimiento */}
-                  <div className="grid grid-cols-2 gap-4 mb-5">
-                    <div>
-                      <label
-                        htmlFor="fechaNacimiento"
-                        className="block text-sm font-medium text-foreground-on-light"
-                      >
-                        Fecha de nacimiento
-                      </label>
-                      <input
-                        type="date"
-                        id="fechaNacimiento"
-                        name="fechaNacimiento"
-                        value={fechaNacimiento}
-                        onChange={handleFechaChange}
-                        className={`w-full px-4 py-2.5 border rounded-full focus:ring-text-accent focus:border-text-accent text-foreground-on-light ${
-                          errorFecha
-                            ? "border-red"
-                            : "border-border-muted-on-light"
-                        }`}
-                      />
-                      {errorFecha && (
-                        <p className="text-text-danger text-[15px] mt-1">
-                          {errorFecha}
-                        </p>
-                      )}
+                  <div className="flex-col mb-5">
+                    <div className="flex gap-x-4">
+                      <div className="flex-col w-full">
+                        <p className="text-sm font-medium text-foreground-on-light">Fecha de nacimiento</p>
+                        <input
+                          type="date"
+                          id="fechaNacimiento"
+                          name="fechaNacimiento"
+                          value={fechaNacimiento}
+                          onChange={handleFechaChange}
+                          max={new Date().toISOString().split("T")[0]}
+                          className={`w-full px-4 h-11 border rounded-full focus:ring-text-accent focus:border-text-accent text-foreground-on-light ${
+                            errorFecha ? "border-red" : "border-border-muted-on-light"
+                          }`}
+                        />
+                      </div>
+
+                      <div className="flex-col w-full">
+                        <p className="text-sm font-medium text-foreground-on-light">Género</p>
+                        <select
+                          id="genero"
+                          name="genero"
+                          className="w-full px-4 h-11 border border-border-muted-on-light rounded-full focus:ring-text-accent focus:border-text-accent text-foreground-on-light"
+                        >
+                          <option value="">Seleccionar</option>
+                          <option value="masculino">Masculino</option>
+                          <option value="femenino">Femenino</option>
+                          <option value="no binario">No binario</option>
+                          <option value="prefiero-no-decir">Prefiero no decir</option>
+                        </select>
+                      </div>
                     </div>
 
-                    <div>
-                      <label
-                        htmlFor="genero"
-                        className="block text-sm font-medium text-foreground-on-light"
-                      >
-                        Género
-                      </label>
-                      <select
-                        id="genero"
-                        name="genero"
-                        className="w-full px-4 py-2.5 border border-border-muted-on-light rounded-full focus:ring-text-accent focus:border-text-accent text-foreground-on-light"
-                      >
-                        <option value="">Seleccionar</option>
-                        <option value="masculino">Masculino</option>
-                        <option value="femenino">Femenino</option>
-                        <option value="no binario">No binario</option>
-                        <option value="prefiero-no-decir">
-                          Prefiero no decir
-                        </option>
-                      </select>
+                    <div className="mb-5">
+                      {errorFecha && <p className="text-text-danger text-sm font-medium mt-1">{errorFecha}</p>}
                     </div>
                   </div>
 
                   {/* Campo: Rol */}
                   <div className="mb-5">
-                    <label
-                      htmlFor="rol"
-                      className="block text-sm font-medium text-foreground-on-light"
-                    >
+                    <label htmlFor="rol" className="block text-sm font-medium text-foreground-on-light">
                       Rol
                     </label>
                     <select
                       id="rol"
                       name="rol"
-                      className="w-full px-4 py-2.5 border border-border-muted-on-light rounded-full focus:ring-text-accent focus:border-text-accent text-foreground-on-light"
+                      className="w-full px-4 h-11 border border-border-muted-on-light rounded-full focus:ring-text-accent focus:border-text-accent text-foreground-on-light"
                     >
                       <option value="seleccionar">Seleccionar</option>
                       <option value="investigador">Investigador/a</option>
@@ -212,10 +187,7 @@ export default function Register() {
                   </div>
 
                   <div className="mb-5">
-                    <label
-                      htmlFor="correo"
-                      className="block text-sm font-medium text-foreground-on-light"
-                    >
+                    <label htmlFor="correo" className="block text-sm font-medium text-foreground-on-light">
                       Correo
                     </label>
 
@@ -225,17 +197,13 @@ export default function Register() {
                       name="correo"
                       value={correo}
                       onChange={handleCorreoChange}
-                      className={`w-full px-4 py-2.5 border rounded-full focus:ring-text-accent focus:border-text-accent text-foreground-on-light ${
-                        errorCorreo
-                          ? "border-primary"
-                          : "border-border-muted-on-light"
+                      className={`w-full px-4 h-11 border rounded-full focus:ring-text-accent focus:border-text-accent text-foreground-on-light ${
+                        errorCorreo ? "border-primary" : "border-border-muted-on-light"
                       }`}
                     />
 
                     {errorCorreo && (
-                      <p
-                        className={`text-text-danger text-[16px] mt-1 h-5 ${!errorCorreo ? "invisible" : ""}`}
-                      >
+                      <p className={`text-text-danger text-sm font-medium mt-1 h-5 ${!errorCorreo ? "invisible" : ""}`}>
                         {errorCorreo}
                       </p>
                     )}
@@ -243,10 +211,7 @@ export default function Register() {
 
                   {/* Campo: Contraseña */}
                   <div className="mb-6">
-                    <label
-                      htmlFor="contrasena"
-                      className="block text-sm font-medium text-foreground-on-light"
-                    >
+                    <label htmlFor="contrasena" className="block text-sm font-medium text-foreground-on-light">
                       Contraseña
                     </label>
                     <div className="relative">
@@ -254,18 +219,14 @@ export default function Register() {
                         type={showPassword ? "text" : "password"}
                         id="contrasena"
                         name="contrasena"
-                        className="w-full px-4 py-2.5 pr-12 border border-border-muted-on-light rounded-full focus:ring-text-accent focus:border-text-accent text-foreground-on-light"
+                        className="w-full px-4 h-11 pr-12 border border-border-muted-on-light rounded-full focus:ring-text-accent focus:border-text-accent text-foreground-on-light"
                       />
                       <button
                         type="button"
                         onClick={() => setShowPassword(!showPassword)}
                         className="absolute right-3 top-1/2 -translate-y-1/2 text-text-muted-on-light hover:text-foreground-on-light transition-colors"
                       >
-                        {showPassword ? (
-                          <EyeOff className="w-5 h-5" />
-                        ) : (
-                          <Eye className="w-5 h-5" />
-                        )}
+                        {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
                       </button>
                     </div>
                   </div>
@@ -286,25 +247,14 @@ export default function Register() {
                 </form>
               </motion.div>
               {/* Footer con texto y links (simplificado) */}
-              <div
-                className="text-center z-50"
-                onClick={(e) => e.stopPropagation()}
-              >
-                <p className="text-foreground font-medium">
-                  Todas tus noticias. Unificadas.
-                </p>
+              <div className="text-center z-50" onClick={(e) => e.stopPropagation()}>
+                <p className="text-foreground font-medium">Todas tus noticias. Unificadas.</p>
                 <div className="flex items-center justify-center gap-2 text-sm">
-                  <a
-                    href="/terminos"
-                    className="text-link-active hover:text-link-hover transition-colors"
-                  >
+                  <a href="/terminos" className="text-link-active hover:text-link-hover transition-colors">
                     Terminos y condiciones
                   </a>
                   <span className="text-foreground">|</span>
-                  <a
-                    href="/privacidad"
-                    className="text-link-active hover:text-link-hover transition-colors"
-                  >
+                  <a href="/privacidad" className="text-link-active hover:text-link-hover transition-colors">
                     Politica de privacidad
                   </a>
                 </div>
