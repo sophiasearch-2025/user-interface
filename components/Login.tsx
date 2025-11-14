@@ -48,7 +48,7 @@ export default function Login() {
       <AnimatePresence>
         {isOpen && (
           <motion.div
-            className="fixed inset-0 z-50 flex items-center justify-center bg-background/90"
+            className="fixed inset-0 z-50 flex items-center justify-center backdrop-blur-lg bg-background/90"
             onClick={closeModal}
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
@@ -70,20 +70,13 @@ export default function Login() {
                 >
                   <X className="w-6 h-6" />
                 </button>
-                <h2 className="text-3xl font-bold text-text-accent mb-2">
-                  Iniciar sesión
-                </h2>
-                <p className="text-text-muted-on-light mb-8">
-                  Para acceder a las funcionalidades
-                </p>
+                <h2 className="text-3xl font-bold text-text-accent mb-2">Iniciar sesión</h2>
+                <p className="text-text-muted-on-light mb-8">Para acceder a las funcionalidades</p>
 
                 <form onSubmit={handleSubmit}>
                   {/* Campo: Correo o nombre de usuario */}
                   <div className="mb-5">
-                    <label
-                      htmlFor="correo"
-                      className="block text-sm font-medium text-foreground-on-light"
-                    >
+                    <label htmlFor="correo" className="block text-sm font-medium text-foreground-on-light">
                       Correo
                     </label>
 
@@ -94,16 +87,12 @@ export default function Login() {
                       value={correo}
                       onChange={handleCorreoChange}
                       className={`w-full px-4 py-2.5 border rounded-full focus:ring-text-accent focus:border-text-accent text-foreground-on-light ${
-                        errorCorreo
-                          ? "border-primary"
-                          : "border-border-muted-on-light"
+                        errorCorreo ? "border-primary" : "border-border-muted-on-light"
                       }`}
                     />
 
                     {errorCorreo && (
-                      <p
-                        className={`text-text-danger text-[16px] mt-1 h-5 ${!errorCorreo ? "invisible" : ""}`}
-                      >
+                      <p className={`text-text-danger text-sm font-medium mt-1 h-5 ${!errorCorreo ? "invisible" : ""}`}>
                         {errorCorreo}
                       </p>
                     )}
@@ -111,10 +100,7 @@ export default function Login() {
 
                   {/* Campo: Contraseña */}
                   <div className="mb-6">
-                    <label
-                      htmlFor="contrasena"
-                      className="block text-sm font-medium text-[#1d1d1b]"
-                    >
+                    <label htmlFor="contrasena" className="block text-sm font-medium text-[#1d1d1b]">
                       Contraseña
                     </label>
                     <div className="relative">
@@ -129,11 +115,7 @@ export default function Login() {
                         onClick={() => setShowPassword(!showPassword)}
                         className="absolute right-3 top-1/2 -translate-y-1/2 text-text-muted-on-light hover:text-foreground-on-light transition-colors"
                       >
-                        {showPassword ? (
-                          <EyeOff className="w-5 h-5" />
-                        ) : (
-                          <Eye className="w-5 h-5" />
-                        )}
+                        {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
                       </button>
                     </div>
                   </div>
@@ -155,25 +137,14 @@ export default function Login() {
                 </button>
               </motion.div>
               {/* Footer con texto y links (simplificado) */}
-              <div
-                className="text-center z-50"
-                onClick={(e) => e.stopPropagation()}
-              >
-                <p className="text-foreground font-medium">
-                  Todas tus noticias. Unificadas.
-                </p>
+              <div className="text-center z-50" onClick={(e) => e.stopPropagation()}>
+                <p className="text-foreground font-medium">Todas tus noticias. Unificadas.</p>
                 <div className="flex items-center justify-center gap-2 text-sm">
-                  <a
-                    href="/terminos"
-                    className="text-link-active hover:text-link-hover transition-colors"
-                  >
+                  <a href="/terminos" className="text-link-active hover:text-link-hover transition-colors">
                     Terminos y condiciones
                   </a>
                   <span className="text-foreground">|</span>
-                  <a
-                    href="/privacidad"
-                    className="text-link-active hover:text-link-hover transition-colors"
-                  >
+                  <a href="/privacidad" className="text-link-active hover:text-link-hover transition-colors">
                     Politica de privacidad
                   </a>
                 </div>
