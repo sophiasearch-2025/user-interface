@@ -65,7 +65,7 @@ export default function Login({ isOpen, onOpen, onClose, onSwitch, className }: 
           >
             <div className="flex flex-col items-center gap-6">
               <motion.div
-                className="bg-surface-light z-50 p-10 rounded-2xl shadow-lg max-w-lg w-full max-h-[90vh] overflow-y-auto relative"
+                className="bg-surface-light z-50 p-10 rounded-2xl shadow-lg w-lg max-h-[90vh] overflow-y-auto relative"
                 onClick={(e) => e.stopPropagation()}
                 initial={{ opacity: 0, scale: 0.95 }}
                 animate={{ opacity: 1, scale: 1 }}
