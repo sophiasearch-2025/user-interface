@@ -4,25 +4,43 @@ import { AnimatePresence, motion } from "framer-motion";
 import { SearchIcon, SlidersHorizontalIcon } from "lucide-react";
 import { useState } from "react";
 import TagSelector from "./TagSelector";
+import { NewsFilterState } from "@/types";
 
-export default function Search() {
+type SearchProps = {
+  onApplyFiltersAction: (filters: NewsFilterState) => void;
+  onClearFiltersAction: () => void;
+};
+
+export default function Search({
+  onApplyFiltersAction: onApplyFilters,
+  onClearFiltersAction: onClearFilters,
+}: SearchProps) {
   const [isFilterOpen, setIsFilterOpen] = useState(false);
+
   const [selectedMedia, setSelectedMedia] = useState<string[]>([]);
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
-  const allMediaOptions = ["La Tercera", "BioBioChile", "CNN Chile", "El Mercurio"];
-  const allCategoryOptions = ["Tecnología", "Cultura", "Internacional", "Deportes", "Política"];
   const [selectedStartDate, setSelectedStartDate] = useState<Date | null>(null);
   const [selectedEndDate, setSelectedEndDate] = useState<Date | null>(null);
+
+  const allMediaOptions = ["La Tercera", "BioBioChile", "CNN Chile", "El Mercurio"];
+  const allCategoryOptions = ["Tecnología", "Cultura", "Internacional", "Deportes", "Política"];
 
   const handleClearFilters = () => {
     setSelectedMedia([]);
     setSelectedCategories([]);
     setSelectedStartDate(null);
     setSelectedEndDate(null);
+    onClearFilters();
   };
 
   const handleApplyFilters = () => {
-    // Llamada a enlace de búsqueda con filtros aplicados.
+    onApplyFilters({
+      startDate: selectedStartDate,
+      endDate: selectedEndDate,
+      media: selectedMedia,
+      categories: selectedCategories,
+    });
+    setIsFilterOpen(false);
   };
 
   return (
