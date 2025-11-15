@@ -6,13 +6,19 @@ import { useState } from "react";
 
 type RegisterProps = {
   isOpen: boolean;
-  onOpen: () => void;
-  onClose: () => void;
-  onSwitch: () => void;
+  onOpenAction: () => void;
+  onCloseAction: () => void;
+  onSwitchAction: () => void;
   className?: string;
 };
 
-export default function Register({ isOpen, onOpen, onClose, onSwitch, className }: RegisterProps) {
+export default function Register({
+  isOpen,
+  onOpenAction: onOpen,
+  onCloseAction: onClose,
+  onSwitchAction: onSwitch,
+  className,
+}: RegisterProps) {
   const [showPassword, setShowPassword] = useState(false);
 
   const [formData, setFormData] = useState({
@@ -81,7 +87,7 @@ export default function Register({ isOpen, onOpen, onClose, onSwitch, className 
     } else {
       const fechaNac = new Date(formData.fechaNacimiento);
       const hoy = new Date();
-      let edad = hoy.getFullYear() - fechaNac.getFullYear();
+      const edad = hoy.getFullYear() - fechaNac.getFullYear();
       const mes = hoy.getMonth() - fechaNac.getMonth();
       const dia = hoy.getDate() - fechaNac.getDate();
 

@@ -17,17 +17,17 @@ export default function AuthButtons({ showRegister, showLogin }: AuthButtonsProp
       <Register
         className={showRegister ? `` : `hidden`}
         isOpen={modalActivo === "register"}
-        onOpen={() => setModalActivo("register")}
-        onClose={() => setModalActivo(null)}
-        onSwitch={() => setModalActivo("login")}
+        onOpenAction={() => setModalActivo("register")}
+        onCloseAction={() => setModalActivo(null)}
+        onSwitchAction={() => setModalActivo("login")}
       />
 
       <Login
         className={showLogin ? `` : `hidden`}
         isOpen={modalActivo === "login"}
-        onOpen={() => setModalActivo("login")}
-        onClose={() => setModalActivo(null)}
-        onSwitch={() => setModalActivo("register")}
+        onOpenAction={() => setModalActivo("login")}
+        onCloseAction={() => setModalActivo(null)}
+        onSwitchAction={() => setModalActivo("register")}
       />
     </div>
   );

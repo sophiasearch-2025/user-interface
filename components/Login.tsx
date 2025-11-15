@@ -6,13 +6,19 @@ import { X } from "lucide-react";
 
 type LoginProps = {
   isOpen: boolean;
-  onOpen: () => void;
-  onClose: () => void;
-  onSwitch: () => void;
+  onOpenAction: () => void;
+  onCloseAction: () => void;
+  onSwitchAction: () => void;
   className?: string;
 };
 
-export default function Login({ isOpen, onOpen, onClose, onSwitch, className }: LoginProps) {
+export default function Login({
+  isOpen,
+  onOpenAction: onOpen,
+  onCloseAction: onClose,
+  onSwitchAction: onSwitch,
+  className,
+}: LoginProps) {
   const [showPassword, setShowPassword] = useState(false);
   const [correo, setCorreo] = useState("");
   const [errorCorreo, setErrorCorreo] = useState("");
