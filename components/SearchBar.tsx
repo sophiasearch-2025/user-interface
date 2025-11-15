@@ -26,7 +26,7 @@ export default function Search() {
   };
 
   return (
-    <div className="relative min-w-lg max-w-3xl mx-auto">
+    <div className="relative min-w-lg w-full max-w-3xl mx-auto">
       <div
         className="relative z-10 flex items-center gap-3
                       bg-surface-light rounded-full p-2 shadow-lg"
