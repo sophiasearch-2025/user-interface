@@ -109,8 +109,8 @@ export default function Register({
     if (Object.keys(newErrors).length > 0) {
       setErrors(newErrors);
     } else {
-      console.log("Formulario Válido (Fusionado). Datos:", formData);
-      alert("¡Registro validado! (Fusión de Mayra y Lorenzo). Listo para API.");
+      console.log("Formulario Válido. Datos:", formData);
+      alert("¡Registro validado!");
       closeModal();
     }
   };
