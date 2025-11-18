@@ -9,7 +9,8 @@ type NewsTableProps = {
 };
 
 export default function NewsTable({ news, selectedIds, onToggleSelect, onToggleSelectAll }: NewsTableProps) {
-  const areAllSelected = news.length > 0 && news.every((item) => selectedIds.includes(item.id));
+  const safeNews = Array.isArray(news) ? news : [];
+  const areAllSelected = safeNews.length > 0 && safeNews.every((item) => selectedIds.includes(item.id));
 
   return (
     <div className="w-full overflow-hidden rounded-lg border border-surface-dark">
@@ -34,10 +35,13 @@ export default function NewsTable({ news, selectedIds, onToggleSelect, onToggleS
               Medio
             </th>
             <th scope="col" className="py-3.5 px-3 text-left text-sm font-semibold text-text-primary">
-              Categoría
+              País
             </th>
             <th scope="col" className="py-3.5 px-3 text-left text-sm font-semibold text-text-primary">
               Autor
+            </th>
+            <th scope="col" className="py-3.5 px-3 text-left text-sm font-semibold text-text-primary">
+              Categoría
             </th>
             <th scope="col" className="py-3.5 px-3 text-left text-sm font-semibold text-text-primary">
               URL
@@ -48,7 +52,14 @@ export default function NewsTable({ news, selectedIds, onToggleSelect, onToggleS
           </tr>
         </thead>
         <tbody className="divide-y divide-surface-dark bg-background">
-          {news.map((item) => (
+          {safeNews.length === 0 && (
+            <tr>
+              <td colSpan={9} className="p-8 text-center text-text-muted">
+                No se encontraron noticias con esos filtros.
+              </td>
+            </tr>
+          )}
+          {safeNews.map((item) => (
             <tr
               key={item.id}
               className={selectedIds.includes(item.id) ? "bg-surface-dark" : "hover:bg-surface-dark/50"}
@@ -66,8 +77,9 @@ export default function NewsTable({ news, selectedIds, onToggleSelect, onToggleS
                 {new Date(item.date).toLocaleDateString("es-CL")}
               </td>
               <td className="whitespace-nowrap py-4 px-3 text-sm text-text-muted">{item.source}</td>
-              <td className="whitespace-nowrap py-4 px-3 text-sm text-text-muted">{item.category}</td>
+              <td className="whitespace-nowrap py-4 px-3 text-sm text-text-muted capitalize">{item.country}</td>
               <td className="whitespace-nowrap py-4 px-3 text-sm text-text-muted">{item.author}</td>
+              <td className="whitespace-nowrap py-4 px-3 text-sm text-text-muted capitalize">{item.category}</td>
               <td className="whitespace-nowrap py-4 px-3 text-sm text-link-active">
                 <a href={item.url} target="_blank" rel="noopener noreferrer" className="hover:underline">
                   Ver Link
