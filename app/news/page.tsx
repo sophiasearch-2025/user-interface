@@ -1,24 +1,42 @@
 "use client";
-import { useState, useEffect } from "react";
+
+import { useState, useEffect, Suspense } from "react";
+import { useSearchParams } from "next/navigation";
 import ContentHeader from "@/components/ContentHeader";
 import Pagination from "@/components/Pagination";
-import Search from "@/components/SearchBar";
 import NewsTable from "@/components/NewsTable";
 import ExportSelectedButton from "@/components/ExportSelectedButton";
 import { NewsItem, NewsFilterState, ApiResponse, ApiNewsItem, FiltersApiResponse } from "@/types";
+import SearchBar from "@/components/SearchBar";
 
-export default function NewsPage() {
+function NewsPageContent() {
+  const searchParams = useSearchParams();
+
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [limit, setLimit] = useState(10);
-  const [activeFilters, setActiveFilters] = useState<NewsFilterState | null>(null);
+
+  const [activeFilters, setActiveFilters] = useState<NewsFilterState | null>(() => {
+    if (searchParams.toString()) {
+      return {
+        searchTerm: searchParams.get("q") || "",
+        media: searchParams.getAll("media"),
+        categories: searchParams.getAll("category"),
+        authors: searchParams.getAll("autor"),
+        startDate: searchParams.get("startDate") ? new Date(searchParams.get("startDate")!) : null,
+        endDate: searchParams.get("endDate") ? new Date(searchParams.get("endDate")!) : null,
+      };
+    }
+    return null;
+  });
+
   const [filteredNews, setFilteredNews] = useState<NewsItem[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
+
   const [mediaOptions, setMediaOptions] = useState<string[]>([]);
   const [categoryOptions, setCategoryOptions] = useState<string[]>([]);
   const [authorOptions, setAuthorOptions] = useState<string[]>([]);
-  const [totalResults, setTotalResults] = useState(0);
 
   useEffect(() => {
     const fetchFilters = async () => {
@@ -33,7 +51,7 @@ export default function NewsPage() {
           }
         }
       } catch (error) {
-        console.error("Error al cargar filtros:", error);
+        console.error("Error filtros:", error);
       }
     };
     fetchFilters();
@@ -60,7 +78,7 @@ export default function NewsPage() {
         params.append("limite", limit.toString());
 
         const response = await fetch(`${baseUrl}?${params.toString()}`);
-        if (!response.ok) throw new Error("Error al conectar con la API");
+        if (!response.ok) throw new Error("Error API");
 
         const result: ApiResponse = await response.json();
 
@@ -78,15 +96,12 @@ export default function NewsPage() {
 
           setFilteredNews(mappedData);
           setTotalPages(result.paginacion.totalPaginas);
-          setTotalResults(result.paginacion.total);
         } else {
           setFilteredNews([]);
-          setTotalResults(0);
         }
       } catch (error) {
         console.error("Error:", error);
         setFilteredNews([]);
-        setTotalResults(0);
       } finally {
         setIsLoading(false);
       }
@@ -95,9 +110,7 @@ export default function NewsPage() {
     fetchNews();
   }, [activeFilters, currentPage, limit]);
 
-  const handlePageChange = (pageNumber: number) => {
-    setCurrentPage(pageNumber);
-  };
+  const handlePageChange = (p: number) => setCurrentPage(p);
 
   const handleApplyFilters = (filters: NewsFilterState) => {
     setActiveFilters(filters);
@@ -110,7 +123,7 @@ export default function NewsPage() {
   };
 
   const handleToggleSelect = (id: string) => {
-    setSelectedIds((prevIds) => (prevIds.includes(id) ? prevIds.filter((i) => i !== id) : [...prevIds, id]));
+    setSelectedIds((prev) => (prev.includes(id) ? prev.filter((i) => i !== id) : [...prev, id]));
   };
 
   const handleToggleSelectAll = () => {
@@ -121,21 +134,17 @@ export default function NewsPage() {
     }
   };
 
-  const handleLimitChange = (newLimit: number) => {
-    setLimit(newLimit);
-    setCurrentPage(1);
-  };
-
   return (
     <div className="w-full mx-auto py-8">
       <ContentHeader firstLine="Catálogo" secondLine="de noticias">
         <div className="flex w-full max-w-7xl">
-          <Search
+          <SearchBar
             onApplyFiltersAction={handleApplyFilters}
             onClearFiltersAction={handleClearFilters}
             availableMediaOptions={mediaOptions}
             availableCategoryOptions={categoryOptions}
             availableAuthorOptions={authorOptions}
+            initialFilters={activeFilters}
           />
           <ExportSelectedButton selectedIds={selectedIds} />
         </div>
@@ -145,7 +154,10 @@ export default function NewsPage() {
           <select
             className="bg-surface-dark border border-border-primary rounded-md p-1 text-sm text-foreground focus:outline-none focus:border-border-primary"
             value={limit}
-            onChange={(e) => handleLimitChange(Number(e.target.value))}
+            onChange={(e) => {
+              setLimit(Number(e.target.value));
+              setCurrentPage(1);
+            }}
           >
             <option value="10">10</option>
             <option value="50">50</option>
@@ -155,14 +167,8 @@ export default function NewsPage() {
         </div>
       </ContentHeader>
 
-      {totalResults !== undefined && (
-        <div className="flex w-full justify-center">
-          <span className="text-lg text-text-muted font-medium mb-1 ml-2">({totalResults} resultados)</span>
-        </div>
-      )}
-
       {isLoading ? (
-        <div className="text-center py-20 text-text-muted">Buscando noticias...</div>
+        <div className="text-center py-20 text-text-muted">Invocando noticias... 🍥</div>
       ) : (
         <NewsTable
           news={filteredNews}
@@ -174,5 +180,13 @@ export default function NewsPage() {
 
       <Pagination currentPage={currentPage} totalPages={totalPages} onPageChange={handlePageChange} />
     </div>
+  );
+}
+
+export default function NewsPage() {
+  return (
+    <Suspense fallback={<div className="text-center py-20">Cargando catálogo...</div>}>
+      <NewsPageContent />
+    </Suspense>
   );
 }
