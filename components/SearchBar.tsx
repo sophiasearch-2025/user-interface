@@ -9,25 +9,32 @@ import { NewsFilterState } from "@/types";
 type SearchProps = {
   onApplyFiltersAction: (filters: NewsFilterState) => void;
   onClearFiltersAction: () => void;
+  availableMediaOptions: string[];
+  availableCategoryOptions: string[];
+  availableAuthorOptions: string[];
 };
 
 export default function Search({
   onApplyFiltersAction: onApplyFilters,
   onClearFiltersAction: onClearFilters,
+  availableMediaOptions,
+  availableCategoryOptions,
+  availableAuthorOptions,
 }: SearchProps) {
   const [isFilterOpen, setIsFilterOpen] = useState(false);
 
+  const [searchTerm, setSearchTerm] = useState("");
   const [selectedMedia, setSelectedMedia] = useState<string[]>([]);
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
+  const [selectedAuthors, setSelectedAuthors] = useState<string[]>([]);
   const [selectedStartDate, setSelectedStartDate] = useState<Date | null>(null);
   const [selectedEndDate, setSelectedEndDate] = useState<Date | null>(null);
 
-  const allMediaOptions = ["La Tercera", "BioBioChile", "CNN Chile", "El Mercurio"];
-  const allCategoryOptions = ["Tecnología", "Cultura", "Internacional", "Deportes", "Política"];
-
   const handleClearFilters = () => {
+    setSearchTerm("");
     setSelectedMedia([]);
     setSelectedCategories([]);
+    setSelectedAuthors([]);
     setSelectedStartDate(null);
     setSelectedEndDate(null);
     onClearFilters();
@@ -35,10 +42,12 @@ export default function Search({
 
   const handleApplyFilters = () => {
     onApplyFilters({
+      searchTerm: searchTerm,
       startDate: selectedStartDate,
       endDate: selectedEndDate,
       media: selectedMedia,
       categories: selectedCategories,
+      authors: selectedAuthors,
     });
     setIsFilterOpen(false);
   };
@@ -59,6 +68,9 @@ export default function Search({
           placeholder="Buscar por palabras claves, fuente o fecha..."
           className="w-full text-sm bg-transparent focus:outline-none
                      text-foreground-on-light placeholder:text-text-muted-on-light"
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+          onKeyDown={(e) => e.key === "Enter" && handleApplyFilters()}
         />
 
         <button
@@ -119,7 +131,7 @@ export default function Search({
             <TagSelector
               label="Medio:"
               buttonText="Añadir medio"
-              availableOptions={allMediaOptions}
+              availableOptions={availableMediaOptions}
               selectedItems={selectedMedia}
               onChangeAction={setSelectedMedia}
             />
@@ -127,9 +139,17 @@ export default function Search({
             <TagSelector
               label="Categoría:"
               buttonText="Añadir categoría"
-              availableOptions={allCategoryOptions}
+              availableOptions={availableCategoryOptions}
               selectedItems={selectedCategories}
               onChangeAction={setSelectedCategories}
+            />
+
+            <TagSelector
+              label="Autor:"
+              buttonText="Añadir autor"
+              availableOptions={availableAuthorOptions}
+              selectedItems={selectedAuthors}
+              onChangeAction={setSelectedAuthors}
             />
 
             <div className="flex justify-end gap-x-3 mt-4 border-t border-surface-light/20 pt-4">
@@ -139,7 +159,6 @@ export default function Search({
               >
                 Limpiar filtros
               </button>
-
               <button
                 className="flex items-center gap-1 text-sm font-bold bg-surface-accent-dark hover:bg-surface-accent-dark/80 text-btn-primary-text px-5 py-2 rounded-full transition-colors"
                 onClick={handleApplyFilters}
