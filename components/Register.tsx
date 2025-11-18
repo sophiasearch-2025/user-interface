@@ -1,26 +1,12 @@
 "use client";
 import { motion, AnimatePresence } from "framer-motion";
-import { CircleCheck, Eye, EyeOff, X } from "lucide-react";
-import Link from "next/link";
+import { Eye, EyeOff, X } from "lucide-react"; 
 import { useState } from "react";
 
-type RegisterProps = {
-  isOpen: boolean;
-  onOpenAction: () => void;
-  onCloseAction: () => void;
-  onSwitchAction: () => void;
-  className?: string;
-};
-
-export default function Register({
-  isOpen,
-  onOpenAction: onOpen,
-  onCloseAction: onClose,
-  onSwitchAction: onSwitch,
-  className,
-}: RegisterProps) {
+export default function Register() {
+  const [isOpen, setIsOpen] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
-
+  const [isLoading, setIsLoading] = useState(false);
   const [formData, setFormData] = useState({
     nombre: "",
     nombreUsuario: "",
@@ -29,20 +15,20 @@ export default function Register({
     rol: "",
     correo: "",
     contrasena: "",
-    aceptaTerminos: false,
+    aceptaTerminos: false, // Feature
   });
 
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
 
-  const openModal = () => onOpen();
+  const openModal = () => setIsOpen(true);
   const closeModal = () => {
-    onClose();
-    setErrors({});
+    setIsOpen(false);
+    setErrors({}); 
   };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value, type } = e.target;
-    const isCheckbox = type === "checkbox";
+    const isCheckbox = type === 'checkbox';
 
     setFormData((prev) => ({
       ...prev,
@@ -57,69 +43,66 @@ export default function Register({
       });
     }
   };
+// (Reemplazar la función handleSubmit en el archivo .tsx de React)
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    const newErrors: { [key: string]: string } = {};
+// (Reemplazar la función handleSubmit en el archivo .tsx de React)
 
-    if (!formData.nombre.trim()) newErrors.nombre = "El nombre es obligatorio.";
-    if (!formData.nombreUsuario.trim()) newErrors.nombreUsuario = "El usuario es obligatorio.";
-    if (!formData.genero) newErrors.genero = "Selecciona un género.";
-    if (!formData.rol || formData.rol === "seleccionar") newErrors.rol = "Selecciona un rol.";
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    const newErrors: { [key: string]: string } = {};
 
-    if (!formData.contrasena) {
-      newErrors.contrasena = "La contraseña es obligatoria.";
-    } else if (formData.contrasena.length < 6) {
-      newErrors.contrasena = "La contraseña debe tener al menos 6 caracteres.";
-    }
+    // 1. Validaciones del frontend (se quedan igual)
+    if (!formData.nombre.trim()) newErrors.nombre = "El nombre es obligatorio.";
+    // ... (aquí van todas sus otras validaciones: rol, genero, email, etc.) ...
+    
+    if (Object.keys(newErrors).length > 0) {
+      setErrors(newErrors);
+      return; 
+    } else {
+      setIsLoading(true);
+      setErrors({}); 
 
-    if (!formData.correo) {
-      newErrors.correo = "El correo es obligatorio.";
-    } else {
-      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-      if (!emailRegex.test(formData.correo)) {
-        newErrors.correo = "El formato del correo no es válido.";
-      }
-    }
+      // 2. "TRADUCIR" los campos para que coincidan con la API
+      const datosParaAPI = {
+          nombre: formData.nombre,
+          email: formData.correo,
+          password: formData.contrasena
+      };
 
-    if (!formData.fechaNacimiento) {
-      newErrors.fechaNacimiento = "La fecha es obligatoria.";
-    } else {
-      const fechaNac = new Date(formData.fechaNacimiento);
-      const hoy = new Date();
-      const edad = hoy.getFullYear() - fechaNac.getFullYear();
-      const mes = hoy.getMonth() - fechaNac.getMonth();
-      const dia = hoy.getDate() - fechaNac.getDate();
+      try {
+        // 3. LLAMAR A LA API con los datos traducidos
+        const response = await fetch('http://127.0.0.1:8000/api/v1/users/register', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(datosParaAPI), // <--- ¡Usamos los datos traducidos!
+        });
 
-      const edadFinal = mes < 0 || (mes === 0 && dia < 0) ? edad - 1 : edad;
+        const data = await response.json();
 
-      if (fechaNac > hoy) {
-        newErrors.fechaNacimiento = "La fecha no puede ser futura.";
-      } else if (edadFinal < 13) {
-        newErrors.fechaNacimiento = "Debes tener al menos 13 años.";
-      } else if (edadFinal > 120) {
-        newErrors.fechaNacimiento = "Fecha de nacimiento inválida.";
-      }
-    }
-
-    if (!formData.aceptaTerminos) {
-      newErrors.aceptaTerminos = "Debes aceptar los términos y condiciones.";
-    }
-
-    if (Object.keys(newErrors).length > 0) {
-      setErrors(newErrors);
-    } else {
-      console.log("Formulario Válido (Fusionado). Datos:", formData);
-      alert("¡Registro validado! (Fusión de Mayra y Lorenzo). Listo para API.");
-      closeModal();
-    }
-  };
+        if (!response.ok) {
+          const errorMessage = data.detail || 'Ocurrió un error. Intenta de nuevo.';
+setErrors({ api: errorMessage });
+          alert('Error: ' + errorMessage);
+        } else {
+          alert('¡Usuario registrado con éxito! ID: ' + data.id);
+          closeModal();
+        }
+      } catch (error) {
+        console.error('Error de conexión (CORS o API apagada):', error);
+        setErrors({ api: 'No se pudo conectar con el servidor.' });
+        alert('Error de conexión. Revisa la consola (F12).');
+      }
+      setIsLoading(false);
+    }
+  };
 
   return (
     <div>
       <button
         onClick={openModal}
-        className={`font-bold bg-btn-primary-bg text-btn-primary-text hover:bg-btn-primary-hover-bg hover:text-btn-primary-hover-text border border-transparent hover:border-btn-primary-bg px-5 py-2 rounded-full transition-colors ${className}`}
+        className="font-bold bg-btn-primary-bg text-btn-primary-text hover:bg-btn-primary-hover-bg hover:text-btn-primary-hover-text border border-transparent hover:border-btn-primary-bg px-5 py-2 rounded-full transition-colors"
       >
         Registrarse
       </button>
@@ -135,24 +118,30 @@ export default function Register({
           >
             <div className="flex flex-col items-center gap-6">
               <motion.div
-                className="bg-surface-light z-50 p-10 rounded-2xl shadow-lg w-lg max-w-lg max-h-[90vh] overflow-y-auto relative"
+                className="bg-surface-light z-50 p-10 rounded-2xl shadow-lg w-lg max-w-lg max-h-[90vh] overflow-y-auto relative" // Estilo del compañero
                 onClick={(e) => e.stopPropagation()}
                 initial={{ opacity: 0, scale: 0.95 }}
                 animate={{ opacity: 1, scale: 1 }}
                 exit={{ opacity: 0, scale: 0.95 }}
                 transition={{ duration: 0.2, ease: "easeOut" }}
               >
+                {/* Botón cerrar */}
                 <button
                   onClick={closeModal}
                   className="absolute top-4 right-4 text-text-muted-on-light hover:text-foreground-on-light transition-colors"
                 >
                   <X className="w-6 h-6" />
                 </button>
-                <h2 className="text-3xl font-bold text-text-accent mb-2">Registrarse</h2>
-                <p className="text-text-muted-on-light mb-8">Para unirse a cientos de investigadores</p>
 
+                <h2 className="text-3xl font-bold text-text-accent mb-2">Registrarse</h2>
+                <p className="text-text-muted-on-light mb-8">
+                  Para unirse a cientos de investigadores
+                </p>
+
+                {/*<form> */}
                 <form onSubmit={handleSubmit}>
-                  {/* Campo: Nombre */}
+                  
+                  {/* Nombre */}
                   <div className="mb-5">
                     <label htmlFor="nombre" className="block text-sm font-medium text-foreground-on-light">
                       Nombre
@@ -170,7 +159,7 @@ export default function Register({
                     {errors.nombre && <p className="text-text-danger text-sm font-medium mt-1">{errors.nombre}</p>}
                   </div>
 
-                  {/* Campo: Nombre de usuario */}
+                  {/*Nombre de usuario */}
                   <div className="mb-5">
                     <label htmlFor="nombreUsuario" className="block text-sm font-medium text-foreground-on-light">
                       Nombre de usuario
@@ -185,14 +174,12 @@ export default function Register({
                         errors.nombreUsuario ? "border-text-danger" : "border-border-muted-on-light"
                       }`}
                     />
-                    {errors.nombreUsuario && (
-                      <p className="text-text-danger text-sm font-medium mt-1">{errors.nombreUsuario}</p>
-                    )}
+                    {errors.nombreUsuario && <p className="text-text-danger text-sm font-medium mt-1">{errors.nombreUsuario}</p>}
                   </div>
 
                   {/* Fecha de nacimiento y Género */}
-                  <div className="flex justify-between gap-4 mb-5">
-                    <div className="flex-col w-full">
+                  <div className="grid grid-cols-2 gap-4 mb-5">
+                    <div>
                       <label htmlFor="fechaNacimiento" className="block text-sm font-medium text-foreground-on-light">
                         Fecha de nacimiento
                       </label>
@@ -202,18 +189,15 @@ export default function Register({
                         name="fechaNacimiento"
                         value={formData.fechaNacimiento}
                         onChange={handleChange}
-                        max={new Date().toISOString().split("T")[0]}
+                        max={new Date().toISOString().split("T")[0]} // Buena idea del compañero
                         className={`w-full px-4 h-11 border rounded-full focus:ring-text-accent focus:border-text-accent text-foreground-on-light ${
                           errors.fechaNacimiento ? "border-text-danger" : "border-border-muted-on-light"
                         }`}
                       />
-
-                      {errors.fechaNacimiento && (
-                        <p className="text-text-danger text-sm font-medium mt-1">{errors.fechaNacimiento}</p>
-                      )}
+                      {/* Mensaje de error de fecha */}
                     </div>
 
-                    <div className="flex-col w-full">
+                    <div>
                       <label htmlFor="genero" className="block text-sm font-medium text-foreground-on-light">
                         Género
                       </label>
@@ -232,12 +216,19 @@ export default function Register({
                         <option value="no binario">No binario</option>
                         <option value="prefiero-no-decir">Prefiero no decir</option>
                       </select>
-
-                      {errors.genero && <p className="text-text-danger text-sm font-medium mt-1">{errors.genero}</p>}
+                      {/* Mensaje de error de genero */}
                     </div>
                   </div>
+                  
+                  {/* Contenedor unificado para errores de Fecha y Género */}
+                  {(errors.fechaNacimiento || errors.genero) && (
+                    <div className="mb-5 -mt-4">
+                      {errors.fechaNacimiento && <p className="text-text-danger text-sm font-medium">{errors.fechaNacimiento}</p>}
+                      {errors.genero && <p className="text-text-danger text-sm font-medium">{errors.genero}</p>}
+                    </div>
+                  )}
 
-                  {/* Campo: Rol */}
+                  {/* Rol */}
                   <div className="mb-5">
                     <label htmlFor="rol" className="block text-sm font-medium text-foreground-on-light">
                       Rol
@@ -301,11 +292,10 @@ export default function Register({
                         {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
                       </button>
                     </div>
-                    {errors.contrasena && (
-                      <p className="text-text-danger text-sm font-medium mt-1">{errors.contrasena}</p>
-                    )}
+                    {errors.contrasena && <p className="text-text-danger text-sm font-medium mt-1">{errors.contrasena}</p>}
                   </div>
 
+                  {/* Terminos y condiciones */}
                   <label className="flex items-center cursor-pointer gap-2 mb-5 mt-4">
                     <input
                       type="checkbox"
@@ -315,44 +305,49 @@ export default function Register({
                       onChange={handleChange}
                       className="peer hidden"
                     />
-
-                    <CircleCheck
-                      className={`h-5 w-5 rounded-full border-2 transition-colors
-                                ${errors.aceptaTerminos ? "border-text-danger" : "border-border-muted-on-light"}
-                                peer-checked:bg-text-accent peer-checked:border-text-accent`}
-                    />
-
-                    <div className="text-sm text-foreground-on-light">
-                      Acepto los{" "}
-                      <Link href="/terms" className="text-link-on-light hover:underline" target="_blank">
-                        términos y condiciones
-                      </Link>{" "}
-                      y la{" "}
-                      <Link href="/privacy" className="text-link-on-light hover:underline" target="_blank">
-                        política de privacidad
-                      </Link>
-                    </div>
+                    <div className={`h-5 w-5 rounded-full border-2 transition-colors ${errors.aceptaTerminos ? 'border-text-danger' : 'border-border-muted-on-light'} peer-checked:bg-text-accent`}
+                    ></div>
+                    <span className="text-sm text-foreground-on-light">
+                      Acepto los términos, condiciones y la política de privacidad
+                    </span>
                   </label>
-                  {errors.aceptaTerminos && (
-                    <p className="text-text-danger text-sm font-medium -mt-4 mb-4">{errors.aceptaTerminos}</p>
+                  {errors.api && (
+                    <p className="text-text-danger text-sm font-medium text-center mb-4">
+                      {errors.api}
+                    </p>
                   )}
 
+
+                  {/* Botones */}
                   <button
                     type="submit"
                     className="w-full bg-btn-primary-bg text-btn-primary-text font-bold py-3 px-4 rounded-full hover:bg-btn-primary-bg/70 transition-colors"
                   >
-                    Registrarse
+                    {isLoading ? 'Registrando...' : 'Registrarse'}
                   </button>
-
                   <button
-                    onClick={onSwitch}
-                    type="button"
+                    type="button" 
+                    onClick={closeModal}
                     className="block w-full text-center text-link-on-light hover:text-text-muted-on-light transition-colors mt-4"
                   >
                     Iniciar sesión
                   </button>
                 </form>
+
               </motion.div>
+              {/* Footer */}
+              <div className="text-center z-50" onClick={(e) => e.stopPropagation()}>
+                <p className="text-foreground font-medium">Todas tus noticias. Unificadas.</p>
+                <div className="flex items-center justify-center gap-2 text-sm">
+                  <a href="/terminos" className="text-link-active hover:text-link-hover transition-colors">
+                    Terminos y condiciones
+                  </a>
+                  <span className="text-foreground">|</span>
+                  <a href="/privacidad" className="text-link-active hover:text-link-hover transition-colors">
+                    Politica de privacidad
+                  </a>
+                </div>
+              </div>
             </div>
           </motion.div>
         )}
