@@ -1,6 +1,6 @@
 import { Carousel } from "@/components";
 import AuthButtons from "@/components/AuthButtons";
-import Search from "@/components/SearchBar";
+import HomeSearchWrapper from "@/components/HomeSearchWrapper";
 import Title from "@/components/Title";
 import { isAuthenticated } from "@/lib/session";
 
@@ -92,7 +92,7 @@ export default async function Home() {
           <h1 className="tracking-widest text-6xl font-bold text-text-accent">UNIFICADAS</h1>
         </div>
 
-        <Search />
+        <HomeSearchWrapper />
 
         <div className="flex flex-col items-center justify-center gap-3">
           <h3 className="text-xl font-medium">Descubre la magia de la IA aplicada a tus investigaciones.</h3>

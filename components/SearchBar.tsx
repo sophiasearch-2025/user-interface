@@ -2,7 +2,7 @@
 
 import { AnimatePresence, motion } from "framer-motion";
 import { SearchIcon, SlidersHorizontalIcon } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import TagSelector from "./TagSelector";
 import { NewsFilterState } from "@/types";
 
@@ -12,6 +12,7 @@ type SearchProps = {
   availableMediaOptions: string[];
   availableCategoryOptions: string[];
   availableAuthorOptions: string[];
+  initialFilters: NewsFilterState | null;
 };
 
 export default function Search({
@@ -20,15 +21,27 @@ export default function Search({
   availableMediaOptions,
   availableCategoryOptions,
   availableAuthorOptions,
+  initialFilters,
 }: SearchProps) {
   const [isFilterOpen, setIsFilterOpen] = useState(false);
 
-  const [searchTerm, setSearchTerm] = useState("");
-  const [selectedMedia, setSelectedMedia] = useState<string[]>([]);
-  const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
-  const [selectedAuthors, setSelectedAuthors] = useState<string[]>([]);
-  const [selectedStartDate, setSelectedStartDate] = useState<Date | null>(null);
-  const [selectedEndDate, setSelectedEndDate] = useState<Date | null>(null);
+  const [searchTerm, setSearchTerm] = useState(initialFilters?.searchTerm || "");
+  const [selectedMedia, setSelectedMedia] = useState<string[]>(initialFilters?.media || []);
+  const [selectedCategories, setSelectedCategories] = useState<string[]>(initialFilters?.categories || []);
+  const [selectedAuthors, setSelectedAuthors] = useState<string[]>(initialFilters?.authors || []);
+  const [selectedStartDate, setSelectedStartDate] = useState<Date | null>(initialFilters?.startDate || null);
+  const [selectedEndDate, setSelectedEndDate] = useState<Date | null>(initialFilters?.endDate || null);
+
+  useEffect(() => {
+    if (initialFilters) {
+      setSearchTerm(initialFilters.searchTerm);
+      setSelectedMedia(initialFilters.media);
+      setSelectedCategories(initialFilters.categories);
+      setSelectedAuthors(initialFilters.authors);
+      setSelectedStartDate(initialFilters.startDate);
+      setSelectedEndDate(initialFilters.endDate);
+    }
+  }, [initialFilters]);
 
   const handleClearFilters = () => {
     setSearchTerm("");
