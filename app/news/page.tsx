@@ -15,6 +15,7 @@ function NewsPageContent() {
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [limit, setLimit] = useState(10);
+  const [totalResults, setTotalResults] = useState(0);
 
   const [activeFilters, setActiveFilters] = useState<NewsFilterState | null>(() => {
     if (searchParams.toString()) {
@@ -96,12 +97,15 @@ function NewsPageContent() {
 
           setFilteredNews(mappedData);
           setTotalPages(result.paginacion.totalPaginas);
+          setTotalResults(result.paginacion.total);
         } else {
           setFilteredNews([]);
+          setTotalResults(0);
         }
       } catch (error) {
         console.error("Error:", error);
         setFilteredNews([]);
+        setTotalResults(0);
       } finally {
         setIsLoading(false);
       }
@@ -166,6 +170,12 @@ function NewsPageContent() {
           </select>
         </div>
       </ContentHeader>
+
+      {totalResults !== undefined && (
+        <div className="flex w-full justify-center">
+          <span className="text-lg text-text-muted font-medium mb-1 ml-2">({totalResults} resultados)</span>
+        </div>
+      )}
 
       {isLoading ? (
         <div className="text-center py-20 text-text-muted">Invocando noticias... 🍥</div>
