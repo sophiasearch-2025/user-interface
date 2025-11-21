@@ -178,7 +178,7 @@ function NewsPageContent() {
       )}
 
       {isLoading ? (
-        <div className="text-center py-20 text-text-muted">Invocando noticias... 🍥</div>
+        <div className="text-center py-20 text-text-muted">Cargando noticias...</div>
       ) : (
         <NewsTable
           news={filteredNews}
