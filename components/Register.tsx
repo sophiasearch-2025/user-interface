@@ -1,10 +1,24 @@
 "use client";
 import { motion, AnimatePresence } from "framer-motion";
-import { Eye, EyeOff, X } from "lucide-react"; 
+import { CircleCheck, Eye, EyeOff, X } from "lucide-react";
+import Link from "next/link";
 import { useState } from "react";
 
-export default function Register() {
-  const [isOpen, setIsOpen] = useState(false);
+type RegisterProps = {
+  isOpen: boolean;
+  onOpenAction: () => void;
+  onCloseAction: () => void;
+  onSwitchAction: () => void;
+  className?: string;
+};
+
+export default function Register({
+  isOpen,
+  onOpenAction: onOpen,
+  onCloseAction: onClose,
+  onSwitchAction: onSwitch,
+  className,
+}: RegisterProps) {
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [formData, setFormData] = useState({
@@ -15,20 +29,20 @@ export default function Register() {
     rol: "",
     correo: "",
     contrasena: "",
-    aceptaTerminos: false, // Feature
+    aceptaTerminos: false,
   });
 
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
 
-  const openModal = () => setIsOpen(true);
+  const openModal = () => onOpen();
   const closeModal = () => {
-    setIsOpen(false);
-    setErrors({}); 
+    onClose();
+    setErrors({});
   };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value, type } = e.target;
-    const isCheckbox = type === 'checkbox';
+    const isCheckbox = type === "checkbox";
 
     setFormData((prev) => ({
       ...prev,
@@ -43,66 +57,62 @@ export default function Register() {
       });
     }
   };
-// (Reemplazar la función handleSubmit en el archivo .tsx de React)
 
-// (Reemplazar la función handleSubmit en el archivo .tsx de React)
+  // (Reemplazar la función handleSubmit en el archivo .tsx de React)
 
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    const newErrors: { [key: string]: string } = {};
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    const newErrors: { [key: string]: string } = {}; // 1. Validaciones del frontend (se quedan igual)
 
-    // 1. Validaciones del frontend (se quedan igual)
-    if (!formData.nombre.trim()) newErrors.nombre = "El nombre es obligatorio.";
-    // ... (aquí van todas sus otras validaciones: rol, genero, email, etc.) ...
-    
-    if (Object.keys(newErrors).length > 0) {
-      setErrors(newErrors);
-      return; 
-    } else {
-      setIsLoading(true);
-      setErrors({}); 
+    if (!formData.nombre.trim()) newErrors.nombre = "El nombre es obligatorio."; // ... (aquí van todas sus otras validaciones: rol, genero, email, etc.) ...
+    if (Object.keys(newErrors).length > 0) {
+      setErrors(newErrors);
+      return;
+    } else {
+      setIsLoading(true);
+      setErrors({});
 
       // 2. "TRADUCIR" los campos para que coincidan con la API
       const datosParaAPI = {
-          nombre: formData.nombre,
-          email: formData.correo,
-          password: formData.contrasena
+        nombre: formData.nombre,
+        email: formData.correo,
+        password: formData.contrasena,
       };
 
-      try {
+      try {
         // 3. LLAMAR A LA API con los datos traducidos
-        const response = await fetch('http://127.0.0.1:8000/api/v1/users/register', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify(datosParaAPI), // <--- ¡Usamos los datos traducidos!
-        });
+        const response = await fetch("http://127.0.0.1:8000/api/v1/users/register", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(datosParaAPI), // <--- ¡Usamos los datos traducidos!
+        });
 
-        const data = await response.json();
+        const data = await response.json();
 
-        if (!response.ok) {
-          const errorMessage = data.detail || 'Ocurrió un error. Intenta de nuevo.';
-setErrors({ api: errorMessage });
-          alert('Error: ' + errorMessage);
-        } else {
-          alert('¡Usuario registrado con éxito! ID: ' + data.id);
-          closeModal();
-        }
-      } catch (error) {
-        console.error('Error de conexión (CORS o API apagada):', error);
-        setErrors({ api: 'No se pudo conectar con el servidor.' });
-        alert('Error de conexión. Revisa la consola (F12).');
-      }
-      setIsLoading(false);
-    }
-  };
+        if (!response.ok) {
+          const errorMessage = data.detail || "Ocurrió un error. Intenta de nuevo.";
+          setErrors({ api: errorMessage });
+          alert("Error: " + errorMessage);
+        } else {
+          alert("¡Usuario registrado con éxito! ID: " + data.id);
+          closeModal();
+        }
+      } catch (error) {
+        console.error("Error de conexión (CORS o API apagada):", error);
+        setErrors({ api: "No se pudo conectar con el servidor." });
+        alert("Error de conexión. Revisa la consola (F12).");
+      }
+      setIsLoading(false);
+    }
+  };
 
   return (
     <div>
       <button
         onClick={openModal}
-        className="font-bold bg-btn-primary-bg text-btn-primary-text hover:bg-btn-primary-hover-bg hover:text-btn-primary-hover-text border border-transparent hover:border-btn-primary-bg px-5 py-2 rounded-full transition-colors"
+        className={`font-bold bg-btn-primary-bg text-btn-primary-text hover:bg-btn-primary-hover-bg hover:text-btn-primary-hover-text border border-transparent hover:border-btn-primary-bg px-5 py-2 rounded-full transition-colors ${className}`}
       >
         Registrarse
       </button>
@@ -134,13 +144,10 @@ setErrors({ api: errorMessage });
                 </button>
 
                 <h2 className="text-3xl font-bold text-text-accent mb-2">Registrarse</h2>
-                <p className="text-text-muted-on-light mb-8">
-                  Para unirse a cientos de investigadores
-                </p>
+                <p className="text-text-muted-on-light mb-8">Para unirse a cientos de investigadores</p>
 
                 {/*<form> */}
                 <form onSubmit={handleSubmit}>
-                  
                   {/* Nombre */}
                   <div className="mb-5">
                     <label htmlFor="nombre" className="block text-sm font-medium text-foreground-on-light">
@@ -174,7 +181,9 @@ setErrors({ api: errorMessage });
                         errors.nombreUsuario ? "border-text-danger" : "border-border-muted-on-light"
                       }`}
                     />
-                    {errors.nombreUsuario && <p className="text-text-danger text-sm font-medium mt-1">{errors.nombreUsuario}</p>}
+                    {errors.nombreUsuario && (
+                      <p className="text-text-danger text-sm font-medium mt-1">{errors.nombreUsuario}</p>
+                    )}
                   </div>
 
                   {/* Fecha de nacimiento y Género */}
@@ -219,11 +228,13 @@ setErrors({ api: errorMessage });
                       {/* Mensaje de error de genero */}
                     </div>
                   </div>
-                  
+
                   {/* Contenedor unificado para errores de Fecha y Género */}
                   {(errors.fechaNacimiento || errors.genero) && (
                     <div className="mb-5 -mt-4">
-                      {errors.fechaNacimiento && <p className="text-text-danger text-sm font-medium">{errors.fechaNacimiento}</p>}
+                      {errors.fechaNacimiento && (
+                        <p className="text-text-danger text-sm font-medium">{errors.fechaNacimiento}</p>
+                      )}
                       {errors.genero && <p className="text-text-danger text-sm font-medium">{errors.genero}</p>}
                     </div>
                   )}
@@ -292,7 +303,9 @@ setErrors({ api: errorMessage });
                         {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
                       </button>
                     </div>
-                    {errors.contrasena && <p className="text-text-danger text-sm font-medium mt-1">{errors.contrasena}</p>}
+                    {errors.contrasena && (
+                      <p className="text-text-danger text-sm font-medium mt-1">{errors.contrasena}</p>
+                    )}
                   </div>
 
                   {/* Terminos y condiciones */}
@@ -305,49 +318,43 @@ setErrors({ api: errorMessage });
                       onChange={handleChange}
                       className="peer hidden"
                     />
-                    <div className={`h-5 w-5 rounded-full border-2 transition-colors ${errors.aceptaTerminos ? 'border-text-danger' : 'border-border-muted-on-light'} peer-checked:bg-text-accent`}
-                    ></div>
-                    <span className="text-sm text-foreground-on-light">
-                      Acepto los términos, condiciones y la política de privacidad
-                    </span>
-                  </label>
-                  {errors.api && (
-                    <p className="text-text-danger text-sm font-medium text-center mb-4">
-                      {errors.api}
-                    </p>
-                  )}
 
+                    <CircleCheck
+                      className={`h-5 w-5 rounded-full border-2 transition-colors
+                                ${errors.aceptaTerminos ? "border-text-danger" : "border-border-muted-on-light"}
+                                peer-checked:bg-text-accent peer-checked:border-text-accent`}
+                    />
+
+                    <div className="text-sm text-foreground-on-light">
+                      Acepto los{" "}
+                      <Link href="/terms" className="text-link-on-light hover:underline" target="_blank">
+                        términos y condiciones
+                      </Link>{" "}
+                      y la{" "}
+                      <Link href="/privacy" className="text-link-on-light hover:underline" target="_blank">
+                        política de privacidad
+                      </Link>
+                    </div>
+                  </label>
+
+                  {errors.api && <p className="text-text-danger text-sm font-medium text-center mb-4">{errors.api}</p>}
 
                   {/* Botones */}
                   <button
                     type="submit"
                     className="w-full bg-btn-primary-bg text-btn-primary-text font-bold py-3 px-4 rounded-full hover:bg-btn-primary-bg/70 transition-colors"
                   >
-                    {isLoading ? 'Registrando...' : 'Registrarse'}
+                    {isLoading ? "Registrando..." : "Registrarse"}
                   </button>
                   <button
-                    type="button" 
-                    onClick={closeModal}
+                    type="button"
+                    onClick={onSwitch}
                     className="block w-full text-center text-link-on-light hover:text-text-muted-on-light transition-colors mt-4"
                   >
                     Iniciar sesión
                   </button>
                 </form>
-
               </motion.div>
-              {/* Footer */}
-              <div className="text-center z-50" onClick={(e) => e.stopPropagation()}>
-                <p className="text-foreground font-medium">Todas tus noticias. Unificadas.</p>
-                <div className="flex items-center justify-center gap-2 text-sm">
-                  <a href="/terminos" className="text-link-active hover:text-link-hover transition-colors">
-                    Terminos y condiciones
-                  </a>
-                  <span className="text-foreground">|</span>
-                  <a href="/privacidad" className="text-link-active hover:text-link-hover transition-colors">
-                    Politica de privacidad
-                  </a>
-                </div>
-              </div>
             </div>
           </motion.div>
         )}
