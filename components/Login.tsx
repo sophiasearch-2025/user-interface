@@ -27,6 +27,54 @@ export default function Login({
   const openModal = () => onOpen();
   const closeModal = () => onClose();
 
+async function verificarUsuario(correo: string) {
+  try {
+    const res = await fetch("http://172.105.21.15:3000/api/users");
+    const data = await res.json();
+
+    if (!data.success || !Array.isArray(data.data)) {
+      return { ok: false, error: "Error en el servidor" };
+    }
+
+    const usuario = data.data.find(
+      (u: any) =>
+        u.email?.toLowerCase() === correo.toLowerCase()
+    );
+
+    if (!usuario) {
+      return { ok: false, error: "Correo no encontrado" };
+    }
+
+    return { ok: true, usuario };
+  } catch (error) {
+    console.error(error);
+    return { ok: false, error: "No se pudo conectar al servidor" };
+  }
+}
+
+
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+
+    if (!correo) {
+      alert("Ingrese un correo");
+      return;
+    }
+
+    const resultado = await verificarUsuario(correo);
+
+    if (!resultado.ok) {
+      alert(resultado.error);
+      return;
+    }
+
+    localStorage.setItem("usuarioActual", JSON.stringify(resultado.usuario));
+
+    alert("Inicio de sesión exitoso");
+
+    closeModal();
+  };
+
   const handleCorreoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
     setCorreo(value);
@@ -42,7 +90,7 @@ export default function Login({
     }
   };
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmitCorreo = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (errorCorreo || !correo) {
       alert("Por favor, corrige los errores antes de continuar.");
