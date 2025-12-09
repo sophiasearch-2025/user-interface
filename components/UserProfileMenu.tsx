@@ -54,7 +54,7 @@ export default function UserProfileMenu({ name: userName, role: userRole, initia
             transition={{ duration: 0.1, ease: "easeInOut" }}
           >
             <a
-              href="#"
+              href="/profile"
               className="flex items-center gap-3 px-4 py-3 text-sm font-medium text-text-primary bg-surface-dark rounded-lg hover:bg-btn-primary-hover-bg/10 transition-colors"
             >
               <User className="w-4 h-4 text-link-active" />

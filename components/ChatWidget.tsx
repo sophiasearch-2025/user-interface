@@ -36,7 +36,7 @@ const ChatBody = React.forwardRef<HTMLDivElement, { messages: Message[] }>(({ me
     {messages.map((msg) => (
       <div key={msg.id} className={`flex ${msg.sender === "user" ? "justify-end" : "justify-start"}`}>
         <div
-          className={`text-sm rounded-full p-3 max-w-[80%] shadow-md
+          className={`text-sm rounded-2xl p-3 max-w-[80%] shadow-md
               ${
                 msg.sender === "user"
                   ? "bg-(--palette-cyan) text-foreground-on-light"
