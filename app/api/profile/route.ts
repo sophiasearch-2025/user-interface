@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 
 const BACKEND_URL = "http://172.105.21.15:3000/api";
 
-// DATOS DE RESPALDO 
+// Datos de respaldo para cuando el backend no está disponible
 const FALLBACK_USER = {
     name: "Usuario Offline",
     email: "modo@offline.com",
@@ -36,9 +36,10 @@ export async function GET(request: Request) {
 
     const responseData = await res.json();
     const userFromDb = responseData.data || responseData;
-    // Mezclamos los datos reales con valores por defecto para evitar nulos
+    
+    // Normalizamos la respuesta asegurando que existan todos los campos necesarios para la UI
     const userForFrontend = {
-      name: userFromDb.name || "Usuario ",
+      name: userFromDb.name || "Usuario",
       email: userFromDb.email || "",
       role: userFromDb.role || "Usuario",
       phone: userFromDb.phone || "", 
@@ -49,9 +50,8 @@ export async function GET(request: Request) {
     return NextResponse.json({ user: userForFrontend });
 
   } catch (error) {
-    // AQUÍ ESTABA EL PROBLEMA ANTES
-    // Si el fetch falla (backend apagado), capturamos el error y devolvemos el Mock
-    console.error(" Error conectando al Backend 3001 (Posiblemente apagado):");
+    // Capturamos errores de red (ej. backend apagado) y devolvemos datos mock
+    console.error("Error conectando al Backend remoto:", error);
     return NextResponse.json({ user: FALLBACK_USER });
   }
 }
@@ -60,6 +60,7 @@ export async function PUT(request: Request) {
   try {
     const userId = request.headers.get("user-id");
     const body = await request.json();
+    
     if (!userId) throw new Error("Falta User ID");
 
     const res = await fetch(`${BACKEND_URL}/users/${userId}`, {
@@ -67,12 +68,14 @@ export async function PUT(request: Request) {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(body)
     });
+
     if (!res.ok) throw new Error("Error en Backend Remoto");
     
     return NextResponse.json({ success: true });
 
   } catch (error) {
     console.warn("Error guardando en remoto:", error);
+    // Devolvemos éxito parcial para no bloquear la UI si falla la persistencia remota
     return NextResponse.json({ success: true, warning: "Guardado localmente" });
   }
 }

@@ -3,15 +3,13 @@
 import React, { useState, useEffect } from "react";
 import { Save, Building2, Phone, Mail, X, Pencil } from "lucide-react";
 import Link from "next/link";
-// Importaciones directas desde components/
 import { EditableField } from "@/components/EditableField";
 import { CollaboratorsSection, Collaborator } from "@/components/CollaboratorsSection";
 
 export default function ProfilePage() {
-  const [loading, setLoading] = useState(true); // Estado para controlar la carga inicial
+  const [loading, setLoading] = useState(true);
 
-  // 1. ESTADO "LA VERDAD" (Datos guardados en BD)
-  // Inicializamos con valores vacíos para que TypeScript no se queje
+  // Estado de los datos persistidos (Base de datos)
   const [savedData, setSavedData] = useState({
     name: "",
     role: "",
@@ -21,32 +19,31 @@ export default function ProfilePage() {
     collaborators: [] as Collaborator[],
   });
 
-  // 2. ESTADO "BORRADOR" (Lo que se edita)
+  // Estado del formulario en edición (Borrador)
   const [formData, setFormData] = useState(savedData);
   
-  // 3. ESTADO DEL MODO EDICIÓN
+  // Control del modo edición global
   const [isGlobalEditing, setIsGlobalEditing] = useState(false);
 
-  // --- EFECTO: CARGAR DATOS AL INICIO (Tu código integrado) ---
+  // Carga inicial de datos
   useEffect(() => {
     const fetchProfile = async () => {
       try {
-        // 1. LEER LOCALSTORAGE (La lógica de tus compañeros)
+        // Obtener credenciales desde localStorage
         const storedUser = localStorage.getItem("usuarioActual");
         
         if (!storedUser) {
-            // Si no hay usuario logueado, redirigir o mostrar vacío
             setLoading(false);
             return; 
         }
 
         const usuarioObj = JSON.parse(storedUser);
-        const userId = usuarioObj.id || usuarioObj._id; // Adaptarse a si usan 'id' o '_id'
+        const userId = usuarioObj.id || usuarioObj._id; 
 
-        // 2. LLAMAR A LA API ENVIANDO EL ID
+        // Solicitar perfil a la API intermedia enviando el ID
         const res = await fetch('/api/profile', {
             headers: {
-                'user-id': userId // <--- ¡Aquí está la clave!
+                'user-id': userId
             }
         });
 
@@ -57,7 +54,7 @@ export default function ProfilePage() {
         setSavedData(data.user);
         setFormData(data.user);
       } catch (error) {
-        console.error("Error:", error);
+        console.error("Error obteniendo perfil:", error);
       } finally {
         setLoading(false);
       }
@@ -66,7 +63,7 @@ export default function ProfilePage() {
     fetchProfile();
   }, []);
 
-  // --- HANDLERS ---
+  // --- Handlers de actualización de estado ---
   
   const updateField = (field: string, newValue: string) => {
     setFormData((prev) => ({ ...prev, [field]: newValue }));
@@ -95,7 +92,7 @@ export default function ProfilePage() {
     }));
   };
 
-  // Guardar cambios: CONECTADO A LA API (PUT)
+  // Guardar cambios en el servidor
   const handleGlobalSave = async () => {
     try {
         const storedUser = localStorage.getItem("usuarioActual");
@@ -105,31 +102,30 @@ export default function ProfilePage() {
             method: 'PUT',
             headers: { 
                 'Content-Type': 'application/json',
-                'user-id': userId // <--- Enviamos ID al guardar
+                'user-id': userId
             },
             body: JSON.stringify(formData)
         });
 
         if (!res.ok) throw new Error("Error al guardar en el servidor");
 
-        // Si la API responde OK, actualizamos la "verdad" localmente
+        // Actualizar estado local al confirmar éxito
         console.log("Guardado exitoso en BD");
         setSavedData(formData);
         setIsGlobalEditing(false);
-        alert("Cambios guardados correctamente"); // Opcional: Feedback visual
+        alert("Cambios guardados correctamente");
     } catch (error) {
         console.error("Error al guardar:", error);
         alert("Hubo un error al guardar los cambios.");
     }
   };
 
-  // Cancelar: revierte el borrador a la "verdad"
+  // Cancelar edición y revertir cambios
   const handleCancel = () => {
     setFormData(savedData);
     setIsGlobalEditing(false);
   };
 
-  // Si está cargando, mostramos un mensaje simple para evitar saltos visuales
   if (loading) {
     return (
         <div className="min-h-screen bg-background text-text-primary flex items-center justify-center">
@@ -142,7 +138,7 @@ export default function ProfilePage() {
     <div className="min-h-screen bg-background text-text-primary p-4 md:p-8 flex justify-center items-start pt-20">
       <div className="w-full max-w-5xl bg-surface-dark rounded-xl shadow-[0_0_15px_rgba(68,207,226,0.1)] border border-border-primary/50 overflow-hidden relative">
         
-        {/* --- HEADER CON BOTONES DE ACCIÓN (ARRIBA) --- */}
+        {/* Header con acciones */}
         <div className="flex flex-col absolute top-6 right-5 z-10 gap-3">
           {isGlobalEditing ? (
             <>
@@ -176,19 +172,18 @@ export default function ProfilePage() {
             </Link>
         </div>
           
-        {/* --- DATOS PERSONALES --- */}
+        {/* Datos Personales */}
         <div className="p-8 flex flex-col md:flex-row gap-8 border-b border-border-primary/20 pt-16 md:pt-8">
           {/* Avatar */}
           <div className="flex-shrink-0 flex justify-center md:justify-start">
             <div className="w-32 h-32 bg-surface-accent-dark rounded-full flex items-center justify-center border-4 border-surface-accent shadow-lg shadow-surface-accent/20">
               <span className="text-5xl text-text-primary font-medium">
-                {/* Protección por si el nombre viene vacío mientras carga */}
                 {formData.name ? formData.name.charAt(0).toUpperCase() : "U"}
               </span>
             </div>
           </div>
 
-          {/* Info Personal */}
+          {/* Campos de texto */}
           <div className="flex-grow space-y-2 mt-2">
             <EditableField
               name="name"
@@ -205,7 +200,6 @@ export default function ProfilePage() {
               className="text-xl text-text-secondary font-medium"
             />
 
-            {/* Grid de Contacto */}
             <div className="flex flex-col gap-3 pt-4">
               <EditableField
                 name="institution"
@@ -235,7 +229,7 @@ export default function ProfilePage() {
           </div>
         </div>
 
-        {/* --- SECCIÓN COLABORADORES --- */}
+        {/* Sección Colaboradores */}
         <CollaboratorsSection 
             collaborators={formData.collaborators}
             isEditingMode={isGlobalEditing}
