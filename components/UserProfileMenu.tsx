@@ -5,9 +5,16 @@ import { ChevronDown, User, BookMarked, LogOut } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { UserData as UserDataProps } from "@/lib/session";
 
-export default function UserProfileMenu({ name: userName, role: userRole, initial: userInitial }: UserDataProps) {
+export default function UserProfileMenu({ name: userName }: UserDataProps) {
   const [isOpen, setOpen] = useState(false);
+  const [usuario, setUsuario] = useState<any>(null);
   const menuRef = useRef<HTMLDivElement>(null);
+
+  const handleCerrarSesion = () => {
+    localStorage.removeItem("usuarioActual");
+    setUsuario(null);                 
+    window.dispatchEvent(new Event("storage"));  
+  };
 
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
@@ -29,11 +36,11 @@ export default function UserProfileMenu({ name: userName, role: userRole, initia
     >
       <div className="flex items-center gap-3">
         <div className="flex items-center justify-center w-10 h-10 bg-btn-primary-bg rounded-full">
-          <span className="font-bold text-text-primary text-lg">{userInitial}</span>
+
         </div>
         <div className="text-left">
           <p className="text-sm font-bold text-link-hover">{userName}</p>
-          <p className="text-xs text-text-muted">{userRole}</p>
+
         </div>
       </div>
 
@@ -72,7 +79,9 @@ export default function UserProfileMenu({ name: userName, role: userRole, initia
               className="flex items-center gap-3 px-4 py-3 text-sm font-medium text-text-danger bg-surface-dark/50 rounded-lg hover:bg-text-danger/20 transition-colors mt-2"
             >
               <LogOut className="w-4 h-4" />
+              <button onClick={handleCerrarSesion}>
               Cerrar sesión
+              </button>
             </a>
           </motion.div>
         )}
