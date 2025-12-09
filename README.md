@@ -148,3 +148,5 @@ Módulo encargado de la visualización y edición de los datos del usuario.
 
     Sincronización: Al guardar, el estado local se envía a /api/profile, que a su vez intenta persistir los datos en el backend externo.
     
+    
+    

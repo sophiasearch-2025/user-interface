@@ -1,11 +1,8 @@
 import { NextResponse } from "next/server";
 
-// 1. URL de tu Backend real
-const BACKEND_URL = "http://localhost:3001/api"; 
-const TEMP_USER_ID = "user123"; 
+const BACKEND_URL = "http://172.105.21.15:3000/api";
 
-// DATOS DE RESPALDO (MOCK)
-// Los definimos fuera para usarlos tanto si el backend da error 404 como si está apagado
+// DATOS DE RESPALDO 
 const FALLBACK_USER = {
     name: "Usuario Offline",
     email: "modo@offline.com",
@@ -17,28 +14,33 @@ const FALLBACK_USER = {
     ]
 };
 
-export async function GET() {
+export async function GET(request: Request) {
   try {
-    console.log(`Intentando conectar a: ${BACKEND_URL}/users/${TEMP_USER_ID}`);
+    const userId = request.headers.get("user-id");
+
+    if (!userId) {
+        return NextResponse.json({ error: "No user ID provided" }, { status: 400 });
+    }
+
+    console.log(`Buscando perfil para ID: ${userId} en ${BACKEND_URL}`);
     
-    const res = await fetch(`${BACKEND_URL}/users/${TEMP_USER_ID}`, {
+    const res = await fetch(`${BACKEND_URL}/users/${userId}`, {
         cache: 'no-store',
-        // Timeout corto para no dejar la página cargando eternamente si el backend no responde
-        signal: AbortSignal.timeout(3000) 
+        signal: AbortSignal.timeout(5000) 
     });
     
     if (!res.ok) {
-        console.warn(`Backend respondió con error: ${res.status}. Usando datos falsos.`);
-        return NextResponse.json({ user: FALLBACK_USER });
+      console.warn(`Backend error ${res.status}. Usando fallback.`);
+      return NextResponse.json({ user: { ...FALLBACK_USER, id: userId } });
     }
 
-    const userFromDb = await res.json();
-
+    const responseData = await res.json();
+    const userFromDb = responseData.data || responseData;
     // Mezclamos los datos reales con valores por defecto para evitar nulos
     const userForFrontend = {
-      name: userFromDb.name || "Usuario Sin Nombre",
-      email: userFromDb.email || "sin@email.com",
-      role: userFromDb.role || "Sin Rol",
+      name: userFromDb.name || "Usuario ",
+      email: userFromDb.email || "",
+      role: userFromDb.role || "Usuario",
       phone: userFromDb.phone || "", 
       institution: userFromDb.institution || "",
       collaborators: userFromDb.collaborators || [], 
@@ -56,22 +58,21 @@ export async function GET() {
 
 export async function PUT(request: Request) {
   try {
+    const userId = request.headers.get("user-id");
     const body = await request.json();
-    console.log("Enviando actualización al backend...", body);
+    if (!userId) throw new Error("Falta User ID");
 
-    const res = await fetch(`${BACKEND_URL}/users/${TEMP_USER_ID}`, {
+    const res = await fetch(`${BACKEND_URL}/users/${userId}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(body)
     });
-
-    if (!res.ok) throw new Error("Backend 3001 rechazó la actualización");
-
+    if (!res.ok) throw new Error("Error en Backend Remoto");
+    
     return NextResponse.json({ success: true });
 
   } catch (error) {
-    console.warn("No se pudo guardar en Backend 3001. Simulando éxito para la Demo.");
-    // Devolvemos éxito falso para que la UI no se rompa, pero avisamos
-    return NextResponse.json({ success: true, warning: "Datos guardados solo localmente" });
+    console.warn("Error guardando en remoto:", error);
+    return NextResponse.json({ success: true, warning: "Guardado localmente" });
   }
 }

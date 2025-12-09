@@ -31,19 +31,35 @@ export default function ProfilePage() {
   useEffect(() => {
     const fetchProfile = async () => {
       try {
-        // Llamamos a NUESTRO endpoint intermedio
-        const res = await fetch('/api/profile'); 
+        // 1. LEER LOCALSTORAGE (La lógica de tus compañeros)
+        const storedUser = localStorage.getItem("usuarioActual");
+        
+        if (!storedUser) {
+            // Si no hay usuario logueado, redirigir o mostrar vacío
+            setLoading(false);
+            return; 
+        }
+
+        const usuarioObj = JSON.parse(storedUser);
+        const userId = usuarioObj.id || usuarioObj._id; // Adaptarse a si usan 'id' o '_id'
+
+        // 2. LLAMAR A LA API ENVIANDO EL ID
+        const res = await fetch('/api/profile', {
+            headers: {
+                'user-id': userId // <--- ¡Aquí está la clave!
+            }
+        });
+
         if (!res.ok) throw new Error("Falló la carga");
         
         const data = await res.json();
         
-        // data.user viene del backend. Lo guardamos en el estado.
         setSavedData(data.user);
-        setFormData(data.user); // Inicializamos el borrador con lo mismo
+        setFormData(data.user);
       } catch (error) {
-        console.error("Error cargando perfil:", error);
+        console.error("Error:", error);
       } finally {
-        setLoading(false); // Terminó la carga (sea éxito o error)
+        setLoading(false);
       }
     };
 
@@ -82,10 +98,15 @@ export default function ProfilePage() {
   // Guardar cambios: CONECTADO A LA API (PUT)
   const handleGlobalSave = async () => {
     try {
-        // Enviamos los datos editados a nuestra API
+        const storedUser = localStorage.getItem("usuarioActual");
+        const userId = storedUser ? JSON.parse(storedUser).id : "0";
+
         const res = await fetch('/api/profile', {
             method: 'PUT',
-            headers: { 'Content-Type': 'application/json' },
+            headers: { 
+                'Content-Type': 'application/json',
+                'user-id': userId // <--- Enviamos ID al guardar
+            },
             body: JSON.stringify(formData)
         });
 
