@@ -121,32 +121,43 @@ Estas son las variables de propósito específico que usamos en los componentes.
 | `--color-accent-success` | `var(--palette-green)` | `text-accent-success` | Iconos de éxito (ej. Checkmarks). |
 | `--color-accent-warning` | `var(--palette-yellow)` | `text-accent-warning` | Iconos de advertencia. |
 
-Arquitectura del Sistema
+Módulo de Perfil (/profile)
 
-El proyecto sigue una arquitectura de Backend for Frontend (BFF) para desacoplar la interfaz de usuario de los servicios de backend externos.
-Diagrama de Comunicación
+Este módulo gestiona la visualización y edición de la información del usuario mediante una arquitectura BFF (Backend for Frontend) que adapta los datos entre el cliente y el backend externo.
+Arquitectura y Flujo de Datos
 
-    Cliente (Navegador): Interactúa solo con el servidor de Next.js (Puerto 3000).
+    Cliente (Frontend):
 
-    Capa Intermedia (Next.js API Routes): Actúa como adaptador y proxy situada en app/api/.
+        Al cargar la página, lee el objeto usuarioActual del localStorage.
 
-    Servicio Backend (Externo): API REST que maneja la persistencia de datos (Puerto 3001).
+        Extrae el ID del usuario y lo envía en un header personalizado user-id a la API interna de Next.js.
 
-Esta arquitectura nos permite:
+    Capa Intermedia (Next.js API - /api/profile):
 
-    Normalizar datos: El adaptador en Next.js inyecta campos necesarios para la UI (como collaborators o phone) que aún no existen en el backend principal.
+        Intercepta la petición y valida la presencia del header user-id.
 
-    Resiliencia (Fallback): Si el backend externo (puerto 3001) no responde, la capa intermedia sirve datos de respaldo ("Usuario Offline") para permitir el desarrollo continuo sin bloqueos.
-   
-### La implementación de Gestión de Perfil (/profile) (accedemos con localhost:3000/profile si no tenemos el login)
+        Actúa como proxy realizando una petición al Backend Externo (http://172.105.21.15:3000/api/users/{id}).
 
-Módulo encargado de la visualización y edición de los datos del usuario.
+        Normalización: Enriquece la respuesta del backend inyectando campos de UI (como collaborators, institution) si estos no existen en la base de datos remota.
 
-    Modo Edición Global: Permite modificar todos los campos de la tarjeta simultáneamente. Los textos se transforman en inputs interactivos.
+        Fallback (Resiliencia): Si el backend externo no responde (timeout o error 500), sirve datos de respaldo ("Usuario Offline") para garantizar que la interfaz siga siendo funcional durante el desarrollo.
 
-    Gestión de Listas: Incluye lógica para añadir, editar y eliminar colaboradores dinámicamente desde el frontend.
+Componentes Clave
 
-    Sincronización: Al guardar, el estado local se envía a /api/profile, que a su vez intenta persistir los datos en el backend externo.
+La interfaz ha sido modularizada para mejorar la mantenibilidad:
+
+    page.tsx (Controlador): Gestiona el estado global del formulario (formData), la carga de datos (useEffect) y la sincronización con el servidor (handleGlobalSave).
+
+    components/EditableField.tsx: Componente atómico que alterna entre vista de texto y modo de edición (input) basado en el estado global.
+
+    components/CollaboratorsSection.tsx: Módulo encapsulado para la gestión dinámica (CRUD visual) de la lista de colaboradores.
+
+    Método,Endpoint,Headers Requeridos,Descripción
     
+
+| Metodo | Endpoint | Headers Requeridos | Descripción (Rol) |
+| :--- | :--- | :--- | :--- |
+| GET | /api/profile  | user-id: {id_usuario} | Obtiene el perfil adaptado para el frontend. |
+| PUT | /api/profile | user-id: {id_usuario} | Recibe el JSON completo y actualiza los datos en el backend remoto. |
     
     
