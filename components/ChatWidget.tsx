@@ -7,6 +7,9 @@ import { Send, X } from "lucide-react";
 import { siGooglegemini } from "simple-icons";
 import Icon from "@/components/Icon";
 
+// Importamos la sesión simulada para la validación de roles.
+import { useMockSession } from "@/components/hooks/useMockSession";
+
 type Message = {
   id: string;
   text: string;
@@ -59,7 +62,7 @@ const ChatBody = React.forwardRef<HTMLDivElement, { messages: Message[] }>(({ me
     <div className="h-4"></div>
   </div>
 ));
-ChatBody.displayName = "ChatBody"; // Buena práctica para debugging con forwardRef
+ChatBody.displayName = "ChatBody"; // Para debugging con forwardRef
 
 const ChatInput = ({ onSend }: { onSend: (text: string) => void }) => {
   const [text, setText] = useState("");
@@ -100,6 +103,8 @@ const ChatInput = ({ onSend }: { onSend: (text: string) => void }) => {
 
 export function ChatWidget() {
   const [isOpen, setIsOpen] = useState(false);
+  const { user } = useMockSession(); // Traemos al usuario para aplicar las restricciones
+  
   const [messages, setMessages] = useState<Message[]>([
     {
       id: crypto.randomUUID(),
@@ -109,6 +114,13 @@ export function ChatWidget() {
   ]);
 
   const scrollContainerRef = useRef<HTMLDivElement>(null);
+
+  // Preguntas sugeridas (Solo visibles si es premium)
+  const suggestedQuestions = [
+    "¿Cuál es la idea principal?",
+    "Resumir en 3 puntos",
+    "¿Qué implicaciones tiene esto?"
+  ];
 
   useEffect(() => {
     if (scrollContainerRef.current) {
@@ -126,6 +138,17 @@ export function ChatWidget() {
   };
 
   const handleSendMessage = async (text: string) => {
+    // Doble validación de seguridad antes de procesar el mensaje
+    if (user?.role !== "premium") {
+      // Bloquea el procesamiento y envía un mensaje de error simulado de la IA
+      setMessages(prev => [...prev, {
+          id: crypto.randomUUID(),
+          text: "Lo siento, necesitas un plan Premium para recibir respuestas de la IA.",
+          sender: "ai"
+      }]);
+      return;
+    }
+
     const userMessage: Message = { id: crypto.randomUUID(), text, sender: "user" };
     setMessages((prev) => [...prev, userMessage]);
 
@@ -133,7 +156,7 @@ export function ChatWidget() {
     setMessages((prev) => [...prev, loadingMessage]);
 
     // ... (Hacer aqui la conexion con la api IA) ...
-    //Provisorio para visualizar un chat
+    //Provisorio chat
     setTimeout(() => {
       const aiMessage: Message = {
         id: crypto.randomUUID(),
@@ -142,7 +165,7 @@ export function ChatWidget() {
       };
       setMessages((prev) => [...prev.filter((msg) => msg.id !== "loading"), aiMessage]);
     }, 1500);
-    //fin provisorio
+    //fin chat
   };
 
   return (
@@ -185,7 +208,33 @@ export function ChatWidget() {
       >
         <ChatHeader onClose={() => setIsOpen(false)} />
         <ChatBody ref={scrollContainerRef} messages={messages} />
-        <ChatInput onSend={handleSendMessage} />
+        
+        {/* LOGICA DE VALIDACIÓN DE UI*/}
+        {user?.role === "premium" ? (
+          <>
+            {/* Sugerencias */}
+            <div className="flex gap-2 overflow-x-auto py-2 px-1">
+                {suggestedQuestions.map((q, i) => (
+                    <button 
+                        key={i} 
+                        onClick={() => handleSendMessage(q)} 
+                        className="text-xs bg-(--palette-black) border border-(--palette-blue-dark)/50 text-text-primary rounded-full px-3 py-1 whitespace-nowrap hover:bg-white/10 transition"
+                    >
+                        {q}
+                    </button>
+                ))}
+            </div>
+            
+            {/* Input activo */}
+            <ChatInput onSend={handleSendMessage} />
+          </>
+        ) : (
+          /*Mensaje de bloqueo y input deshabilitado */
+          <div className="p-4 bg-red-500/10 border border-red-500 rounded-lg mt-4 text-center">
+            <p className="text-sm font-bold text-red-200">Función Bloqueada</p>
+            <p className="text-xs text-gray-300 mt-1">Mejora tu plan para chatear con Sophia IA.</p>
+          </div>
+        )}
       </div>
     </motion.div>
   );

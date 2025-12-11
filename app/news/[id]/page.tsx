@@ -1,20 +1,36 @@
 "use client";
 
-import { 
-  ArrowUpRight, 
-  Download, 
-  Image as ImageIcon, 
-  Sparkles, 
-  ChevronDown 
+import { 
+  ArrowUpRight, 
+  Download, 
+  Image as ImageIcon, 
+  Sparkles, 
+  ChevronDown 
 } from "lucide-react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
 
+// Importar el hook de sesión simulada para la demostración de roles.
+import { useMockSession } from "@/components/hooks/useMockSession";
+
+// Definición de tipos para las noticias.
+interface Noticia {
+  id: string;
+  fuente: string;
+  fuenteLogo: string;
+  categoria: string;
+  fecha: string;
+  titulo: string;
+  bajada: string;
+  contenido: string[];
+  urlOriginal: string;
+}
+
 // Daros de simulacion
-const mockNoticia1 = {
+const mockNoticia1: Noticia = {
   id: "1",
   fuente: "La Tercera",
-  fuenteLogo: "LT", 
+  fuenteLogo: "LT", 
   categoria: "Qué Pasa de La Tercera",
   fecha: "12 de mayo de 2023",
   titulo: "Fascinante estudio chileno descubre 370 mil fósiles que explica cómo se ha explotado la costa chilena",
@@ -31,10 +47,10 @@ const mockNoticia1 = {
   urlOriginal: "https://www.latercera.com/"
 };
 
-const mockNoticia2 = {
+const mockNoticia2: Noticia = {
   id: "2",
   fuente: "BioBioChile",
-  fuenteLogo: "BB", 
+  fuenteLogo: "BB", 
   categoria: "Ciencia y Tecnología",
   fecha: "20 de noviembre de 2024",
   titulo: "Desde el desierto de Atacama: Astrónomos captan la imagen más nítida de una estrella en otra galaxia",
@@ -49,10 +65,10 @@ const mockNoticia2 = {
   urlOriginal: "https://www.biobiochile.cl/"
 };
 
-const mockNoticia3 = {
+const mockNoticia3: Noticia = {
   id: "3",
   fuente: "Emol",
-  fuenteLogo: "EM", 
+  fuenteLogo: "EM", 
   categoria: "Tecnología y Sociedad",
   fecha: "05 de diciembre de 2024",
   titulo: "Inteligencia Artificial ayuda a predecir incendios forestales en la zona centro-sur con un 80% de precisión",
@@ -67,32 +83,57 @@ const mockNoticia3 = {
 };
 
 // --- BASE DE DATOS FALSA (Para buscar por ID) ---
-const baseDeDatosMock = [
+const baseDeDatosMock: Noticia[] = [
   mockNoticia1,
   mockNoticia2,
   mockNoticia3
 ];
 
 export default function NewsDetailPage() {
-  const params = useParams(); 
+  const params = useParams(); 
+  const { user, loginAs } = useMockSession(); // Usamos la sesión falsa para la demostración de roles.
+  
   // params.id tendrá el valor "1", "2", etc.
   const noticia = baseDeDatosMock.find(n => n.id === params.id) || baseDeDatosMock[0];
+
+  // Función para manejar el clic del botón de IA y aplicar la restricción C2.
+  const handleChatClick = () => {
+    // Criterio C2: "Un usuario demo recibe un mensaje de error si intenta usar IA".
+    if (user?.role !== "premium") {
+      alert("🔒 Función exclusiva para usuarios Premium.\nPor favor actualiza tu plan para chatear con la noticia.");
+      return;
+    }
+    // Lógica para usuarios premium (o con acceso)
+    alert("✨ Abriendo asistente IA para analizar esta noticia...");
+    // Aquí iría la lógica real para abrir el chat o el modal de IA
+  };
 
   return (
     <div className="min-h-screen bg-background text-white pb-20">
       <main className="container mx-auto px-4 lg:px-8 py-8">
-        
+         
+        {/* BOTONES DE CONTROL PARA LA DEMO */}
+        <div className="fixed top-24 left-4 z-50 bg-black/80 p-2 rounded text-xs">
+          <p className="mb-1 text-gray-400">DEMO CONTROLS:</p>
+          <button onClick={() => loginAs("free")} className="block text-red-400 mb-1 hover:underline">Soy Free</button>
+          <button onClick={() => loginAs("premium")} className="block text-green-400 hover:underline">Soy Premium</button>
+        </div>
+
         {/* --- 1. ENCABEZADO --- */}
         <div className="flex flex-col xl:flex-row justify-between items-start xl:items-center mb-8 gap-6">
           <div>
             <h1 className="text-4xl font-bold leading-tight">
               Visualización <br />
-              <span className="text-[#532ECE]">de noticia</span> 
+              <span className="text-[#532ECE]">de noticia</span> 
             </h1>
           </div>
 
           <div className="flex flex-wrap gap-3">
-            <button className="flex items-center gap-2 bg-[#27272A] border border-gray-700 text-white px-5 py-2.5 rounded-full font-medium hover:bg-opacity-80 transition">
+            {/* Aplicar la misma validación de clic en el botón IA del encabezado */}
+            <button 
+              onClick={handleChatClick}
+              className="flex items-center gap-2 bg-[#27272A] border border-gray-700 text-white px-5 py-2.5 rounded-full font-medium hover:bg-opacity-80 transition"
+            >
               Herramientas IA <Sparkles className="w-4 h-4 text-white" /> <ChevronDown className="w-4 h-4" />
             </button>
             <button className="flex items-center gap-2 bg-[#FF6164] text-white px-5 py-2.5 rounded-full font-medium hover:bg-opacity-90 transition">
@@ -109,7 +150,7 @@ export default function NewsDetailPage() {
 
         {/* --- 2. TARJETA DE NOTICIA --- */}
         <div className="relative bg-[#F2F2F2] text-black rounded-[2rem] p-8 lg:p-16 shadow-2xl max-w-6xl mx-auto">
-          
+           
           <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-8 gap-4">
             <div className="flex items-center gap-4">
               <div className="w-14 h-14 bg-[#A83232] rounded-full flex items-center justify-center text-white font-bold text-2xl">
@@ -126,7 +167,7 @@ export default function NewsDetailPage() {
           <h2 className="text-3xl md:text-4xl lg:text-[2.5rem] font-bold text-[#1D1D1B] mb-6 leading-tight">
             {noticia.titulo}
           </h2>
-          
+           
           <p className="text-lg text-[#1D1D1B] font-medium mb-10 leading-relaxed opacity-90">
             {noticia.bajada}
           </p>
@@ -137,10 +178,14 @@ export default function NewsDetailPage() {
             ))}
           </div>
 
-          {/* Botón flotante para la T8 */}
+          {/* Botón flotante para la T8 con validación C2 */}
           <div className="fixed right-0 top-1/2 transform -translate-y-1/2 z-50">
-             <button className="bg-[#2A3176] text-white py-3 px-6 rounded-t-xl font-bold shadow-lg hover:bg-opacity-90 transition flex items-center gap-3 -rotate-90 origin-bottom-right translate-x-[40%]">
-              Conversar con IA <Sparkles className="w-4 h-4" />
+             <button 
+                onClick={handleChatClick}
+                className={`${user?.role === 'premium' ? 'bg-[#2A3176]' : 'bg-gray-600'} text-white py-3 px-6 rounded-t-xl font-bold shadow-lg hover:bg-opacity-90 transition flex items-center gap-3 -rotate-90 origin-bottom-right translate-x-[40%]`}
+              >
+              {user?.role === 'premium' ? 'Conversar con IA' : 'IA Bloqueada'} 
+              <Sparkles className="w-4 h-4" />
             </button>
           </div>
 
