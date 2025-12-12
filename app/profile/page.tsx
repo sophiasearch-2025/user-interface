@@ -4,9 +4,11 @@ import React, { useState, useEffect } from "react";
 import { Save, Building2, Phone, Mail, X, Pencil } from "lucide-react";
 import Link from "next/link";
 import { EditableField } from "@/components/EditableField";
+import { useRouter } from "next/navigation";
 import { CollaboratorsSection, Collaborator } from "@/components/CollaboratorsSection";
 
 export default function ProfilePage() {
+  const router = useRouter();
   const [loading, setLoading] = useState(true);
 
   // Estado de los datos persistidos (Base de datos)
@@ -33,7 +35,7 @@ export default function ProfilePage() {
         const storedUser = localStorage.getItem("usuarioActual");
         
         if (!storedUser) {
-            setLoading(false);
+            router.push("/"); 
             return; 
         }
 
