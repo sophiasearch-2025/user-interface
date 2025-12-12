@@ -7,9 +7,10 @@ import { EditableField } from "@/components/EditableField";
 import { useRouter } from "next/navigation";
 import { CollaboratorsSection, Collaborator } from "@/components/CollaboratorsSection";
 
+type ViewState = "checking_auth" | "fetching_data" | "ready";
+
 export default function ProfilePage() {
   const router = useRouter();
-  const [loading, setLoading] = useState(true);
 
   // Estado de los datos persistidos (Base de datos)
   const [savedData, setSavedData] = useState({
@@ -21,6 +22,9 @@ export default function ProfilePage() {
     collaborators: [] as Collaborator[],
   });
 
+  // Estado inicial: 'checking_auth' (No mostramos NADA todavía)
+  const [viewState, setViewState] = useState<ViewState>("checking_auth");
+
   // Estado del formulario en edición (Borrador)
   const [formData, setFormData] = useState(savedData);
   
@@ -30,15 +34,19 @@ export default function ProfilePage() {
   // Carga inicial de datos
   useEffect(() => {
     const fetchProfile = async () => {
-      try {
-        // Obtener credenciales desde localStorage
-        const storedUser = localStorage.getItem("usuarioActual");
-        
-        if (!storedUser) {
-            router.push("/"); 
-            return; 
-        }
+      // Obtener credenciales desde localStorage
+      const storedUser = localStorage.getItem("usuarioActual");
+      
+      if (!storedUser) {
+          // Si no hay usuario, mostramos error y cortamos la ejecución
+          router.push("/404");
+          return; 
+      }
 
+      // Si hay usuario, pasamos a estado de carga visual
+      setViewState("fetching_data");
+
+      try {
         const usuarioObj = JSON.parse(storedUser);
         const userId = usuarioObj.id || usuarioObj._id; 
 
@@ -55,15 +63,34 @@ export default function ProfilePage() {
         
         setSavedData(data.user);
         setFormData(data.user);
+
+        // Datos listos, mostramos la interfaz
+        setViewState("ready");
       } catch (error) {
         console.error("Error obteniendo perfil:", error);
-      } finally {
-        setLoading(false);
+        router.push("/404");
       }
     };
 
     fetchProfile();
-  }, []);
+  }, [router]);
+
+  // Caso 1: Comprobando autenticación o redirigiendo (Usuario no logueado)
+  if (viewState === "checking_auth") {
+    return null; 
+  }
+
+  // Caso 2: Usuario autenticado, pero cargando datos (Usuario logueado)
+  if (viewState === "fetching_data") {
+    return (
+        <div className="min-h-screen bg-background text-text-primary flex items-center justify-center pt-20">
+            <div className="flex flex-col items-center gap-4">
+                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-text-accent"></div>
+                <p className="text-xl animate-pulse font-medium">Cargando perfil...</p>
+            </div>
+        </div>
+    );
+  }
 
   // --- Handlers de actualización de estado ---
   
@@ -128,14 +155,7 @@ export default function ProfilePage() {
     setIsGlobalEditing(false);
   };
 
-  if (loading) {
-    return (
-        <div className="min-h-screen bg-background text-text-primary flex items-center justify-center">
-            <p className="text-xl animate-pulse">Cargando perfil...</p>
-        </div>
-    );
-  }
-
+  // Caso 3: Vista Principal (viewState === "ready")
   return (
     <div className="min-h-screen bg-background text-text-primary p-4 md:p-8 flex justify-center items-start pt-20">
       <div className="w-full max-w-5xl bg-surface-dark rounded-xl shadow-[0_0_15px_rgba(68,207,226,0.1)] border border-border-primary/50 overflow-hidden relative">

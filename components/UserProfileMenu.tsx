@@ -13,6 +13,7 @@ export default function UserProfileMenu({ name: userName }: UserDataProps) {
   const router = useRouter();
 
   const handleCerrarSesion = () => {
+    setOpen(false);
     localStorage.removeItem("usuarioActual");
     setUsuario(null);                 
     window.dispatchEvent(new Event("storage"));  
@@ -78,15 +79,13 @@ export default function UserProfileMenu({ name: userName }: UserDataProps) {
               <BookMarked className="w-4 h-4 text-link-active" />
               Mis colecciones
             </a>
-            <a
-              href="#"
-              className="flex items-center gap-3 px-4 py-3 text-sm font-medium text-text-danger bg-surface-dark/50 rounded-lg hover:bg-text-danger/20 transition-colors mt-2"
+            <button
+              onClick={handleCerrarSesion}
+              className="flex items-center gap-3 px-4 py-3 w-full text-left text-sm font-medium text-text-danger bg-surface-dark/50 rounded-lg hover:bg-text-danger/20 transition-colors"
             >
               <LogOut className="w-4 h-4" />
-              <button onClick={handleCerrarSesion}>
               Cerrar sesión
-              </button>
-            </a>
+            </button>
           </motion.div>
         )}
       </AnimatePresence>
