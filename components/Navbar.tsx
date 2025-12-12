@@ -22,8 +22,13 @@ export default function Navbar() {
     };
     leerUsuario();
     window.addEventListener("storage", leerUsuario);
+    window.addEventListener("auth-change", leerUsuario);
 
-    return () => window.removeEventListener("storage", leerUsuario);
+    return () => {
+      window.removeEventListener("storage", leerUsuario);
+      window.removeEventListener("auth-change", leerUsuario);
+    };
+    
   }, []);
 
   return (

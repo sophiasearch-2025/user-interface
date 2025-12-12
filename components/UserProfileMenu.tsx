@@ -4,16 +4,20 @@ import { useState, useEffect, useRef } from "react";
 import { ChevronDown, User, BookMarked, LogOut } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { UserData as UserDataProps } from "@/lib/session";
+import { useRouter } from "next/navigation";
 
 export default function UserProfileMenu({ name: userName }: UserDataProps) {
   const [isOpen, setOpen] = useState(false);
   const [usuario, setUsuario] = useState<any>(null);
   const menuRef = useRef<HTMLDivElement>(null);
+  const router = useRouter();
 
   const handleCerrarSesion = () => {
     localStorage.removeItem("usuarioActual");
     setUsuario(null);                 
     window.dispatchEvent(new Event("storage"));  
+    window.dispatchEvent(new Event("auth-change"));
+    router.push("/");
   };
 
   useEffect(() => {

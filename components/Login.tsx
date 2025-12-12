@@ -69,7 +69,7 @@ async function verificarUsuario(correo: string) {
     }
 
     localStorage.setItem("usuarioActual", JSON.stringify(resultado.usuario));
-
+    window.dispatchEvent(new Event("auth-change"));
     alert("Inicio de sesión exitoso");
 
     closeModal();
