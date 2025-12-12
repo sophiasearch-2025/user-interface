@@ -27,7 +27,6 @@ Este proyecto utiliza la API de Google Gemini para el chat. Para que funcione lo
     ```bash
     GEMINI_API_KEY=AIzaSy...
     ```
-4.  Reinicia el proyecto (`npm run dev`).
 
 
 Iniciar el servidor de desarrollo:
