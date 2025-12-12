@@ -1,19 +1,24 @@
 "use client";
 
-import { 
-  ArrowUpRight, 
-  Download, 
-  Image as ImageIcon, 
-  Sparkles, 
-  ChevronDown 
+import { 
+  ArrowUpRight, 
+  Download, 
+  Image as ImageIcon, 
+  Sparkles, 
+  ChevronDown,
+  ChevronLeft,
+  ChevronRight
 } from "lucide-react";
 import Link from "next/link";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
+import { useEffect } from "react";
 
-// Importar el hook de sesión simulada para la demostración de roles.
+// --- IMPORTS DEL PROYECTO ---
 import { useMockSession } from "@/components/hooks/useMockSession";
+import { useChat } from "@/context/ChatContext";
+import { Carousel } from "@/components/Carousel"; 
 
-// Definición de tipos para las noticias.
+// --- TIPOS ---
 interface Noticia {
   id: string;
   fuente: string;
@@ -26,11 +31,11 @@ interface Noticia {
   urlOriginal: string;
 }
 
-// Daros de simulacion
+// --- DATOS MOCK ---
 const mockNoticia1: Noticia = {
   id: "1",
   fuente: "La Tercera",
-  fuenteLogo: "LT", 
+  fuenteLogo: "LT", 
   categoria: "Qué Pasa de La Tercera",
   fecha: "12 de mayo de 2023",
   titulo: "Fascinante estudio chileno descubre 370 mil fósiles que explica cómo se ha explotado la costa chilena",
@@ -50,7 +55,7 @@ const mockNoticia1: Noticia = {
 const mockNoticia2: Noticia = {
   id: "2",
   fuente: "BioBioChile",
-  fuenteLogo: "BB", 
+  fuenteLogo: "BB", 
   categoria: "Ciencia y Tecnología",
   fecha: "20 de noviembre de 2024",
   titulo: "Desde el desierto de Atacama: Astrónomos captan la imagen más nítida de una estrella en otra galaxia",
@@ -68,7 +73,7 @@ const mockNoticia2: Noticia = {
 const mockNoticia3: Noticia = {
   id: "3",
   fuente: "Emol",
-  fuenteLogo: "EM", 
+  fuenteLogo: "EM", 
   categoria: "Tecnología y Sociedad",
   fecha: "05 de diciembre de 2024",
   titulo: "Inteligencia Artificial ayuda a predecir incendios forestales en la zona centro-sur con un 80% de precisión",
@@ -82,60 +87,131 @@ const mockNoticia3: Noticia = {
   urlOriginal: "https://www.emol.com/"
 };
 
-// --- BASE DE DATOS FALSA (Para buscar por ID) ---
 const baseDeDatosMock: Noticia[] = [
   mockNoticia1,
   mockNoticia2,
   mockNoticia3
 ];
 
+// --- COMPONENTE PRINCIPAL ---
 export default function NewsDetailPage() {
-  const params = useParams(); 
-  const { user, loginAs } = useMockSession(); // Usamos la sesión falsa para la demostración de roles.
+  const params = useParams(); 
+  const router = useRouter();
   
-  // params.id tendrá el valor "1", "2", etc.
+  // Hooks personalizados
+  const { user, loginAs } = useMockSession(); 
+  const { openChat, setNewsContext } = useChat(); 
+  
+  // Buscar noticia actual
   const noticia = baseDeDatosMock.find(n => n.id === params.id) || baseDeDatosMock[0];
 
-  // Función para manejar el clic del botón de IA y aplicar la restricción C2.
+  // Lógica de Navegación (Anterior / Siguiente)
+  const currentIndex = baseDeDatosMock.findIndex(n => n.id === noticia.id);
+  const prevNoticia = baseDeDatosMock[currentIndex - 1];
+  const nextNoticia = baseDeDatosMock[currentIndex + 1];
+
+  
+  const noticiasRelacionadas = baseDeDatosMock
+    .filter(n => n.id !== noticia.id)
+    .map(n => ({
+      title: n.titulo,
+      description: n.bajada,
+      sourceName: n.fuente,
+      dateISO: n.fecha, 
+      logoSrc: n.fuenteLogo === "LT" ? "/logos/lt.png" : "/favicon.ico", 
+      ctaHref: `/news/${n.id}`, 
+      textButton: "Leer noticia"
+    }));
+
+  
+  useEffect(() => {
+    if (noticia) {
+      const contextoCompleto = `
+        TÍTULO: ${noticia.titulo}
+        FUENTE: ${noticia.fuente} (${noticia.fecha})
+        BAJADA: ${noticia.bajada}
+        CONTENIDO: ${noticia.contenido.join("\n")}
+      `;
+      setNewsContext(contextoCompleto);
+    }
+  }, [noticia, setNewsContext]);
+
+  // Manejador del botón IA
   const handleChatClick = () => {
-    // Criterio C2: "Un usuario demo recibe un mensaje de error si intenta usar IA".
     if (user?.role !== "premium") {
       alert("🔒 Función exclusiva para usuarios Premium.\nPor favor actualiza tu plan para chatear con la noticia.");
       return;
     }
-    // Lógica para usuarios premium (o con acceso)
-    alert("✨ Abriendo asistente IA para analizar esta noticia...");
-    // Aquí iría la lógica real para abrir el chat o el modal de IA
+    openChat();
   };
 
   return (
-    <div className="min-h-screen bg-background text-white pb-20">
-      <main className="container mx-auto px-4 lg:px-8 py-8">
-         
-        {/* BOTONES DE CONTROL PARA LA DEMO */}
-        <div className="fixed top-24 left-4 z-50 bg-black/80 p-2 rounded text-xs">
-          <p className="mb-1 text-gray-400">DEMO CONTROLS:</p>
-          <button onClick={() => loginAs("free")} className="block text-red-400 mb-1 hover:underline">Soy Free</button>
-          <button onClick={() => loginAs("premium")} className="block text-green-400 hover:underline">Soy Premium</button>
+    <div className="min-h-screen bg-background text-white pb-20 relative">
+      
+      {/* CONTROLES DEMO */}
+      <div className="fixed top-24 left-4 z-[100] bg-black/80 backdrop-blur-md border border-white/10 p-3 rounded-lg text-xs shadow-2xl">
+        <p className="mb-2 text-gray-400 font-bold uppercase tracking-wider">Modo Demo</p>
+        <div className="flex flex-col gap-2">
+          <button 
+            onClick={() => loginAs("free")} 
+            className={`px-3 py-1 rounded ${user?.role === 'free' ? 'bg-red-500 text-white' : 'bg-white/10 text-gray-300'}`}
+          >
+            Simular Free
+          </button>
+          <button 
+            onClick={() => loginAs("premium")} 
+            className={`px-3 py-1 rounded ${user?.role === 'premium' ? 'bg-green-500 text-white' : 'bg-white/10 text-gray-300'}`}
+          >
+            Simular Premium
+          </button>
         </div>
+        <p className="mt-2 text-[10px] text-gray-500">Usuario: {user?.name}</p>
+      </div>
 
-        {/* --- 1. ENCABEZADO --- */}
+      {/* NAVEGACIÓN LATERAL */}
+      {prevNoticia && (
+        <Link 
+          href={`/news/${prevNoticia.id}`}
+          className="fixed left-4 top-1/2 -translate-y-1/2 z-30 p-3 bg-surface-dark/50 hover:bg-surface-accent rounded-full backdrop-blur-sm transition-all group hidden xl:block border border-white/10 shadow-lg"
+          title="Noticia Anterior"
+        >
+          <ChevronLeft className="w-8 h-8 text-white group-hover:scale-110 transition-transform" />
+        </Link>
+      )}
+
+      {nextNoticia && (
+        <Link 
+          href={`/news/${nextNoticia.id}`}
+          className="fixed right-4 top-1/2 -translate-y-1/2 z-30 p-3 bg-surface-dark/50 hover:bg-surface-accent rounded-full backdrop-blur-sm transition-all group hidden xl:block border border-white/10 shadow-lg"
+          title="Siguiente Noticia"
+        >
+          <ChevronRight className="w-8 h-8 text-white group-hover:scale-110 transition-transform" />
+        </Link>
+      )}
+
+      <main className="container mx-auto px-4 lg:px-8 py-8">
+        
+        {/* ENCABEZADO */}
         <div className="flex flex-col xl:flex-row justify-between items-start xl:items-center mb-8 gap-6">
           <div>
             <h1 className="text-4xl font-bold leading-tight">
               Visualización <br />
-              <span className="text-[#532ECE]">de noticia</span> 
+              <span className="text-[#532ECE]">de noticia</span> 
             </h1>
           </div>
 
           <div className="flex flex-wrap gap-3">
-            {/* Aplicar la misma validación de clic en el botón IA del encabezado */}
             <button 
               onClick={handleChatClick}
-              className="flex items-center gap-2 bg-[#27272A] border border-gray-700 text-white px-5 py-2.5 rounded-full font-medium hover:bg-opacity-80 transition"
+              className={`flex items-center gap-2 border px-5 py-2.5 rounded-full font-medium transition
+                ${user?.role === 'premium' 
+                  ? 'bg-[#2A3176] border-[#2A3176] text-white hover:bg-opacity-90' 
+                  : 'bg-[#27272A] border-gray-700 text-gray-400 cursor-not-allowed hover:bg-gray-800'
+                }`}
             >
-              Herramientas IA <Sparkles className="w-4 h-4 text-white" /> <ChevronDown className="w-4 h-4" />
+              Herramientas IA <Sparkles className="w-4 h-4" /> <ChevronDown className="w-4 h-4" />
             </button>
+
             <button className="flex items-center gap-2 bg-[#FF6164] text-white px-5 py-2.5 rounded-full font-medium hover:bg-opacity-90 transition">
               Imágenes <ImageIcon className="w-4 h-4" />
             </button>
@@ -148,9 +224,9 @@ export default function NewsDetailPage() {
           </div>
         </div>
 
-        {/* --- 2. TARJETA DE NOTICIA --- */}
+        {/* TARJETA DE NOTICIA */}
         <div className="relative bg-[#F2F2F2] text-black rounded-[2rem] p-8 lg:p-16 shadow-2xl max-w-6xl mx-auto">
-           
+          
           <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-8 gap-4">
             <div className="flex items-center gap-4">
               <div className="w-14 h-14 bg-[#A83232] rounded-full flex items-center justify-center text-white font-bold text-2xl">
@@ -167,7 +243,7 @@ export default function NewsDetailPage() {
           <h2 className="text-3xl md:text-4xl lg:text-[2.5rem] font-bold text-[#1D1D1B] mb-6 leading-tight">
             {noticia.titulo}
           </h2>
-           
+          
           <p className="text-lg text-[#1D1D1B] font-medium mb-10 leading-relaxed opacity-90">
             {noticia.bajada}
           </p>
@@ -178,18 +254,37 @@ export default function NewsDetailPage() {
             ))}
           </div>
 
-          {/* Botón flotante para la T8 con validación C2 */}
-          <div className="fixed right-0 top-1/2 transform -translate-y-1/2 z-50">
-             <button 
-                onClick={handleChatClick}
-                className={`${user?.role === 'premium' ? 'bg-[#2A3176]' : 'bg-gray-600'} text-white py-3 px-6 rounded-t-xl font-bold shadow-lg hover:bg-opacity-90 transition flex items-center gap-3 -rotate-90 origin-bottom-right translate-x-[40%]`}
-              >
-              {user?.role === 'premium' ? 'Conversar con IA' : 'IA Bloqueada'} 
+          {/* BOTÓN FLOTANTE*/}
+          <div className="fixed right-0 top-1/2 transform -translate-y-1/2 z-40">
+             <button 
+               onClick={handleChatClick}
+               className={`
+                 ${user?.role === 'premium' ? 'bg-[#2A3176] hover:bg-opacity-90' : 'bg-gray-600 cursor-not-allowed'}
+                 text-white py-3 px-6 rounded-t-xl font-bold shadow-lg transition flex items-center gap-3 -rotate-90 origin-bottom-right translate-x-[40%]
+               `}
+             >
+              {user?.role === 'premium' ? 'Conversar con IA' : 'IA Bloqueada'} 
               <Sparkles className="w-4 h-4" />
             </button>
           </div>
-
         </div>
+
+        {/* SECCIÓN: SEGUIR LEYENDO (Carrusel) */}
+        <div className="mt-16 max-w-7xl mx-auto">
+          <div className="flex items-center gap-4 mb-8">
+            <div className="w-2 h-8 bg-[#532ECE]"></div>
+            <h3 className="text-3xl font-bold">Seguir leyendo</h3>
+          </div>
+          
+          <div className="relative">
+            <Carousel 
+              items={noticiasRelacionadas}
+              render="NoticeCardA"
+              maxWidth="100%"
+            />
+          </div>
+        </div>
+
       </main>
     </div>
   );

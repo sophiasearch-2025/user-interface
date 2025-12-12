@@ -4,6 +4,7 @@ import { Mukta_Vaani, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { Footer } from "@/components/Footer";
 import { ChatWidget } from "@/components/ChatWidget";
+import { ChatProvider } from "@/context/ChatContext";
 
 const muktaVaani = Mukta_Vaani({
   variable: "--font-mukta",
@@ -21,21 +22,16 @@ export const metadata: Metadata = {
   description: "",
 };
 
-export default async function RootLayout({
-  children,
-}: Readonly<{
-  children: React.ReactNode;
-}>) {
+export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en">
       <body className={`${muktaVaani.variable} ${geistMono.variable} antialiased min-h-screen flex flex-col`}>
-        <Navbar />
-        
-        <main className="grow">{children}</main>
-        
-        <ChatWidget />
-        
-        <Footer />
+        <ChatProvider> {/* <--- ENVOLVER TODO */}
+          <Navbar />
+          <main className="grow">{children}</main>
+          <ChatWidget />
+          <Footer />
+        </ChatProvider>
       </body>
     </html>
   );

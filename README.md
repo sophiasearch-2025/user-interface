@@ -13,13 +13,24 @@ Este repositorio contiene el código fuente del *frontend* de Sophia Search, sit
 
 ## Guía de inicio rápido
 
-Primero, instala las dependencias:
+Instalar las dependencias:
 
 ```bash
 npm i
 ```
 
-Posteriormente, inicia el servidor de desarrollo:
+Este proyecto utiliza la API de Google Gemini para el chat. Para que funcione localmente:
+
+1.  Obtén una API Key gratuita en [Google AI Studio](https://aistudio.google.com/).
+2.  Duplica el archivo `.env.example` y renómbralo a `.env.local`.
+3.  Abre `.env.local` y pega tu clave:
+    ```bash
+    GEMINI_API_KEY=AIzaSy...
+    ```
+4.  Reinicia el proyecto (`npm run dev`).
+
+
+Iniciar el servidor de desarrollo:
 
 ```bash
 npm run dev
