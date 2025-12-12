@@ -9,6 +9,17 @@ import { CollaboratorsSection, Collaborator } from "@/components/CollaboratorsSe
 
 type ViewState = "checking_auth" | "fetching_data" | "ready";
 
+// Interfaz extendida para incluir photoURL
+interface UserProfile {
+  name: string;
+  role: string;
+  email: string;
+  phone: string;
+  institution: string;
+  photoURL?: string | null;
+  collaborators: Collaborator[];
+}
+
 export default function ProfilePage() {
   const router = useRouter();
 
@@ -19,6 +30,7 @@ export default function ProfilePage() {
     email: "",
     phone: "",
     institution: "",
+    photoURL: null,
     collaborators: [] as Collaborator[],
   });
 
@@ -139,9 +151,19 @@ export default function ProfilePage() {
         if (!res.ok) throw new Error("Error al guardar en el servidor");
 
         // Actualizar estado local al confirmar éxito
-        console.log("Guardado exitoso en BD");
         setSavedData(formData);
         setIsGlobalEditing(false);
+
+        // Sincronizamos con el NavBar y el localStorage
+        if (storedUser) {
+            const currentUser = JSON.parse(storedUser);
+            // Fusionamos los datos antiguos con los nuevos
+            const updatedUser = { ...currentUser, ...formData };
+            localStorage.setItem("usuarioActual", JSON.stringify(updatedUser));
+            // Disparar evento para que Navbar.tsx se entere del cambio
+            window.dispatchEvent(new Event("auth-change"));
+        }
+        console.log("Guardado exitoso en BD");
         alert("Cambios guardados correctamente");
     } catch (error) {
         console.error("Error al guardar:", error);

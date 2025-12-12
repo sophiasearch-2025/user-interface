@@ -3,10 +3,16 @@
 import { useState, useEffect, useRef } from "react";
 import { ChevronDown, User, BookMarked, LogOut } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
-import { UserData as UserDataProps } from "@/lib/session";
 import { useRouter } from "next/navigation";
 
-export default function UserProfileMenu({ name: userName }: UserDataProps) {
+// Interfaz extendida para incluir photoURL
+import type { UserData } from "@/lib/session";
+interface UserProfileMenuProps extends UserData {
+    name: string;
+    photoURL?: string | null;
+}
+
+export default function UserProfileMenu({ name: userName, photoURL }: UserProfileMenuProps) {
   const [isOpen, setOpen] = useState(false);
   const [usuario, setUsuario] = useState<any>(null);
   const menuRef = useRef<HTMLDivElement>(null);
@@ -40,8 +46,12 @@ export default function UserProfileMenu({ name: userName }: UserDataProps) {
       ${isOpen ? "rounded-t-xl" : "rounded-xl"}`}
     >
       <div className="flex items-center gap-3">
-        <div className="flex items-center justify-center w-10 h-10 bg-btn-primary-bg rounded-full">
-
+        <div className="flex items-center justify-center w-10 h-10 bg-btn-primary-bg rounded-full overflow-hidden border border-white/10">
+            {photoURL ? (
+                <img src={photoURL} alt={userName} className="w-full h-full object-cover" />
+            ) : (
+                <span className="text-white font-bold">{userName?.charAt(0).toUpperCase()}</span>
+            )}
         </div>
         <div className="text-left">
           <p className="text-sm font-bold text-link-hover">{userName}</p>

@@ -55,7 +55,7 @@ export default function Navbar() {
         </div>
 
         {usuario ? (
-           <UserProfileMenu name={usuario.name}/>
+           <UserProfileMenu name={usuario.name} photoURL={usuario.photoURL} />
         ) : (
           <AuthButtons showRegister={true} showLogin={true} />
         )}
