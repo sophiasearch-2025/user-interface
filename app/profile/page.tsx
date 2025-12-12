@@ -219,7 +219,7 @@ export default function ProfilePage() {
         {/* Datos Personales */}
         <div className="p-8 flex flex-col md:flex-row gap-8 border-b border-border-primary/20 pt-16 md:pt-8">
           {/* Avatar */}
-          <div className="flex-shrink-0 flex justify-center md:justify-start">
+          <div className="shrink-0 flex justify-center md:justify-start">
             <div className="w-32 h-32 bg-surface-accent-dark rounded-full flex items-center justify-center border-4 border-surface-accent shadow-lg shadow-surface-accent/20">
               <span className="text-5xl text-text-primary font-medium">
                 {formData.name ? formData.name.charAt(0).toUpperCase() : "U"}
@@ -228,7 +228,7 @@ export default function ProfilePage() {
           </div>
 
           {/* Campos de texto */}
-          <div className="flex-grow space-y-2 mt-2">
+          <div className="grow space-y-2 mt-2">
             <EditableField
               name="name"
               value={formData.name}

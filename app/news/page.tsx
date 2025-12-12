@@ -42,7 +42,7 @@ function NewsPageContent() {
   useEffect(() => {
     const fetchFilters = async () => {
       try {
-        const response = await fetch("http://localhost:3001/api/filtros");
+        const response = await fetch("/api/filtros");
         if (response.ok) {
           const result: FiltersApiResponse = await response.json();
           if (result.success) {
@@ -62,7 +62,7 @@ function NewsPageContent() {
     const fetchNews = async () => {
       setIsLoading(true);
       try {
-        const baseUrl = "http://localhost:3001/api/buscar";
+        const baseUrl = "/api/buscar";
         const params = new URLSearchParams();
 
         if (activeFilters) {
@@ -79,7 +79,10 @@ function NewsPageContent() {
         params.append("limite", limit.toString());
 
         const response = await fetch(`${baseUrl}?${params.toString()}`);
-        if (!response.ok) throw new Error("Error API");
+        if (!response.ok) {
+            const errorText = await response.text();
+            throw new Error(`Error API: ${response.status} ${response.statusText} - ${errorText}`);
+        }
 
         const result: ApiResponse = await response.json();
 
