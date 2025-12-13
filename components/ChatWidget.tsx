@@ -6,6 +6,7 @@ import { motion } from "framer-motion";
 import { Send, X } from "lucide-react";
 import { siGooglegemini } from "simple-icons";
 import Icon from "@/components/Icon";
+import { v4 as uuidv4 } from "uuid";
 
 type Message = {
   id: string;
@@ -102,7 +103,7 @@ export function ChatWidget() {
   const [isOpen, setIsOpen] = useState(false);
   const [messages, setMessages] = useState<Message[]>([
     {
-      id: crypto.randomUUID(),
+      id: uuidv4(),
       text: "¡Hola! Soy Sophia, tu asistente de IA. Estoy aquí para ayudarte con tus investigaciones.",
       sender: "ai",
     },
@@ -126,7 +127,7 @@ export function ChatWidget() {
   };
 
   const handleSendMessage = async (text: string) => {
-    const userMessage: Message = { id: crypto.randomUUID(), text, sender: "user" };
+    const userMessage: Message = { id: uuidv4(), text, sender: "user" };
     setMessages((prev) => [...prev, userMessage]);
 
     const loadingMessage: Message = { id: "loading", text: "...", sender: "ai" };
@@ -136,7 +137,7 @@ export function ChatWidget() {
     //Provisorio para visualizar un chat
     setTimeout(() => {
       const aiMessage: Message = {
-        id: crypto.randomUUID(),
+        id: uuidv4(),
         text: `Respuesta simulada a: "${text}"`,
         sender: "ai",
       };
