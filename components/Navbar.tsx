@@ -15,13 +15,19 @@ export default function Navbar() {
     const leerUsuario = () => {
       try {
         const data = localStorage.getItem("usuarioActual");
-        setUsuario(data ? JSON.parse(data) : null);
-      } catch {
+        if (data) {
+          setUsuario(JSON.parse(data));
+        } else {
+          setUsuario(null);
+        }
+      } catch (error) {
+        console.error("Error al leer usuario:", error);
         setUsuario(null);
+      } finally {
+        setIsCheckingAuth(false);
       }
     };
     leerUsuario();
-    setIsCheckingAuth(false);
     window.addEventListener("storage", leerUsuario);
     window.addEventListener("auth-change", leerUsuario);
 
