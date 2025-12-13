@@ -1,5 +1,6 @@
 "use client";
 import React from "react";
+import { useRouter } from "next/navigation"; 
 import CardButton from "../CardButton/CardButton";
 import MediaAvatar from "./MediaAvatar";
 import NoticeCover from "./NoticeCover";
@@ -9,19 +10,18 @@ import { useNoticeCardLogic, convertDateToStr } from "./hooks";
 import styles from "./NoticeCardA.module.css";
 
 // *** CONSTANTES DE CONFIGURACIÓN DEL COMPONENTE ***
-const ANCHO_MINIMO = 200; // px - ancho mínimo absoluto que el componente no puede cruzar
-const ALTO_MINIMO = 200;  // px - alto mínimo absoluto que el componente no puede cruzar
+const ANCHO_MINIMO = 200; 
+const ALTO_MINIMO = 200;  
 
-const ANCHO_DEF = 330;    // px - ancho por defecto
-const ALTO_DEF = 440;    // px - alto por defecto
+const ANCHO_DEF = 330;    
+const ALTO_DEF = 440;    
 
-// *** CONFIGURACIÓN RESPONSIVE RESPECTO AL COVER ***
 const COVER_VISIBILITY_CONFIG = {
-  base: 2.1,     // factor en W = W0
-  W0: 330,       // pivote (ancho por defecto)
-  L: 0.1,        // asíntota inferior
-  kUp: 0.4,      // rapidez de acercamiento a L (W > W0)
-  kDown: 0.8,    // pendiente para W < W0
+  base: 2.1,     
+  W0: 330,       
+  L: 0.1,        
+  kUp: 0.4,      
+  kDown: 0.8,    
 };
 
 type Props = {
@@ -63,6 +63,8 @@ export default function NoticeCardA({
   resizable,
   buttonVariant = "outline",
 }: Props) {
+  const router = useRouter(); 
+
   const {
     scale,
     buttonTransform,
@@ -83,6 +85,15 @@ export default function NoticeCardA({
   });
 
   const prettyDate = convertDateToStr(dateISO);
+
+  
+  const handleButtonClick = () => {
+    if (ctaHref.startsWith("/")) {
+      router.push(ctaHref);
+    } else {
+      window.open(ctaHref, "_blank");
+    }
+  };
 
   return (
     <div 
@@ -169,7 +180,7 @@ export default function NoticeCardA({
             >
               <CardButton 
                 variant={buttonVariant}
-                onClick={() => window.open(ctaHref, "_blank")}
+                onClick={handleButtonClick} 
               >
                 {textButton}
               </CardButton>

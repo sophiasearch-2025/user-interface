@@ -114,7 +114,7 @@ export default function TestPage() {
           <Carousel
             items={notices}
             render="NoticeCardA"
-            maxWidth="80vw" //Ancho relativo: 80% de la pantalla
+            maxWidth="80vw" 
           />
         </section>
       </div>
