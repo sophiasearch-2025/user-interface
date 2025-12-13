@@ -1,11 +1,30 @@
+"use client"
+
 import Image from "next/image";
 import UserProfileMenu from "./UserProfileMenu";
 import { UserData, fetchUserData } from "../lib/session";
 import Link from "next/link";
 import AuthButtons from "./AuthButtons";
+import { useEffect } from "react";
+import { useState } from "react";
 
-export default async function Navbar() {
-  const userData: UserData | null = await fetchUserData();
+export default function Navbar() {
+  const [usuario, setUsuario] = useState<any>(null);
+
+  useEffect(() => {
+    const leerUsuario = () => {
+      try {
+        const data = localStorage.getItem("usuarioActual");
+        setUsuario(data ? JSON.parse(data) : null);
+      } catch {
+        setUsuario(null);
+      }
+    };
+    leerUsuario();
+    window.addEventListener("storage", leerUsuario);
+
+    return () => window.removeEventListener("storage", leerUsuario);
+  }, []);
 
   return (
     <nav className="w-full">
@@ -30,8 +49,8 @@ export default async function Navbar() {
           </Link>
         </div>
 
-        {userData ? (
-          <UserProfileMenu name={userData.name} role={userData.role} initial={userData.initial} />
+        {usuario ? (
+           <UserProfileMenu name={usuario.name}/>
         ) : (
           <AuthButtons showRegister={true} showLogin={true} />
         )}

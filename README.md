@@ -120,3 +120,44 @@ Estas son las variables de propósito específico que usamos en los componentes.
 | `--color-border-muted-on-light` | `var(--palette-black)` | `border-border-muted-on-light` | Bordes de inputs en fondos claros (ej. Registro). |
 | `--color-accent-success` | `var(--palette-green)` | `text-accent-success` | Iconos de éxito (ej. Checkmarks). |
 | `--color-accent-warning` | `var(--palette-yellow)` | `text-accent-warning` | Iconos de advertencia. |
+
+Módulo de Perfil (/profile)
+
+Este módulo gestiona la visualización y edición de la información del usuario mediante una arquitectura BFF (Backend for Frontend) que adapta los datos entre el cliente y el backend externo.
+Arquitectura y Flujo de Datos
+
+    Cliente (Frontend):
+
+        Al cargar la página, lee el objeto usuarioActual del localStorage.
+
+        Extrae el ID del usuario y lo envía en un header personalizado user-id a la API interna de Next.js.
+
+    Capa Intermedia (Next.js API - /api/profile):
+
+        Intercepta la petición y valida la presencia del header user-id.
+
+        Actúa como proxy realizando una petición al Backend Externo (http://172.105.21.15:3000/api/users/{id}).
+
+        Normalización: Enriquece la respuesta del backend inyectando campos de UI (como collaborators, institution) si estos no existen en la base de datos remota.
+
+        Fallback (Resiliencia): Si el backend externo no responde (timeout o error 500), sirve datos de respaldo ("Usuario Offline") para garantizar que la interfaz siga siendo funcional durante el desarrollo.
+
+Componentes Clave
+
+La interfaz ha sido modularizada para mejorar la mantenibilidad:
+
+    page.tsx (Controlador): Gestiona el estado global del formulario (formData), la carga de datos (useEffect) y la sincronización con el servidor (handleGlobalSave).
+
+    components/EditableField.tsx: Componente atómico que alterna entre vista de texto y modo de edición (input) basado en el estado global.
+
+    components/CollaboratorsSection.tsx: Módulo encapsulado para la gestión dinámica (CRUD visual) de la lista de colaboradores.
+
+    Método,Endpoint,Headers Requeridos,Descripción
+    
+
+| Metodo | Endpoint | Headers Requeridos | Descripción (Rol) |
+| :--- | :--- | :--- | :--- |
+| GET | /api/profile  | user-id: {id_usuario} | Obtiene el perfil adaptado para el frontend. |
+| PUT | /api/profile | user-id: {id_usuario} | Recibe el JSON completo y actualiza los datos en el backend remoto. |
+    
+    
