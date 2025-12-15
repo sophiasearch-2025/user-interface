@@ -15,7 +15,7 @@ interface UserProfile {
   role: string;
   email: string;
   phone: string;
-  institution: string;
+  company: string;
   photoURL?: string | null;
   collaborators: Collaborator[];
 }
@@ -29,7 +29,7 @@ export default function ProfilePage() {
     role: "",
     email: "",
     phone: "",
-    institution: "",
+    company: "",
     photoURL: null,
     collaborators: [] as Collaborator[],
   });
@@ -217,10 +217,10 @@ export default function ProfilePage() {
 
             <div className="flex flex-col gap-3 pt-4">
               <EditableField
-                name="institution"
-                value={formData.institution}
+                name="company"
+                value={formData.company}
                 isEditingMode={isGlobalEditing}
-                onSave={(val) => updateField("institution", val)}
+                onSave={(val) => updateField("company", val)}
                 icon={Building2}
                 placeholder="Institución"
               />
