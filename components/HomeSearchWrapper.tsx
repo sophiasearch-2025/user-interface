@@ -15,7 +15,7 @@ export default function HomeSearchWrapper() {
   useEffect(() => {
     const fetchFilters = async () => {
       try {
-        const response = await fetch("http://localhost:3001/api/filtros");
+        const response = await fetch("/api/filtros");
         if (response.ok) {
           const result: FiltersApiResponse = await response.json();
           if (result.success) {

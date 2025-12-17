@@ -50,9 +50,11 @@ export const EditableField = ({
     return (
       <div className={`flex items-center gap-3 py-1 ${className}`}>
         {Icon && <Icon className="w-4 h-4 text-text-muted mt-1 shrink-0" />}
-        <span className={value ? "text-text-primary" : "text-text-muted italic"}>
-          {value || placeholder}
-        </span>
+        <div className="grow border-b border-transparent pb-1 min-w-0">
+          <span className={`block truncate ${value ? "text-text-primary" : "text-text-muted italic"}`}>
+            {value || placeholder}
+          </span>
+        </div>
       </div>
     );
   }
@@ -62,7 +64,7 @@ export const EditableField = ({
     <div className={`relative group flex items-center gap-3 py-1 ${className}`}>
       {Icon && <Icon className="w-4 h-4 text-text-muted mt-1 shrink-0" />}
 
-      <div className="flex-grow relative min-w-0">
+      <div className="grow relative min-w-0">
         {isActive ? (
           // --- MODO ACTIVO (Escribiendo) ---
           <input
@@ -79,7 +81,7 @@ export const EditableField = ({
           // --- MODO ESPERA (Editable pero no focado) ---
           <div
             onClick={() => setIsActive(true)}
-            className="cursor-pointer flex items-center justify-between border-b border-transparent hover:border-text-muted/20 pb-1 transition-colors group/field"
+            className="cursor-pointer flex items-center gap-2 w-fit max-w-full border-b border-transparent hover:border-text-muted/20 pb-1 transition-colors group/field"
           >
             <span className={`truncate ${tempValue ? "text-text-primary" : "text-text-muted italic"}`}>
               {tempValue || placeholder}

@@ -58,55 +58,66 @@ export default function Register({
     }
   };
 
-  // (Reemplazar la función handleSubmit en el archivo .tsx de React)
 
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    const newErrors: { [key: string]: string } = {}; // 1. Validaciones del frontend (se quedan igual)
+const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+  e.preventDefault();
 
-    if (!formData.nombre.trim()) newErrors.nombre = "El nombre es obligatorio."; // ... (aquí van todas sus otras validaciones: rol, genero, email, etc.) ...
-    if (Object.keys(newErrors).length > 0) {
-      setErrors(newErrors);
-      return;
-    } else {
-      setIsLoading(true);
-      setErrors({});
+  /*HOLA a quién lea esto (HISTORIA 6)
+  Hay un problema acá y es que la API se actualizó pero no quedó un registro (o yo por lo menos no lo tengo) sobre
+  como cambiaron todo. La cosa es que opté por usar de ejemplo al ultimo usuario que registraron y en base a ese
+  defini lo que se envia a la API.
 
-      // 2. "TRADUCIR" los campos para que coincidan con la API
-      const datosParaAPI = {
-        nombre: formData.nombre,
-        email: formData.correo,
-        password: formData.contrasena,
-      };
+  El registro que tenían ustedes acá pide más cosas de lo que la API esta recibiendo (porque asumo que lo crearon antes
+  de la API) pero no supone un problema pues no exige realmente los otros datos (como la fecha de nacimiento, genero,etc.)
+  No quise borrarlos de su interfaz pues ustedes lo hicieron y siento que si alguien de otro grupo llega a borrarles cosas
+  igual es penca, asi que vean bien allí sobre lo que se pide al registrar.
 
-      try {
-        // 3. LLAMAR A LA API con los datos traducidos
-        const response = await fetch("http://127.0.0.1:8000/api/v1/users/register", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(datosParaAPI), // <--- ¡Usamos los datos traducidos!
-        });
+  Esta función en teoría funciona, pero para evitar llenar la API de usuarios incompletos y/o malos prefiero no probar
+  a lo loco.
 
-        const data = await response.json();
+  - Rodrigo González (del otro grupo de interfaz)
+  */
 
-        if (!response.ok) {
-          const errorMessage = data.detail || "Ocurrió un error. Intenta de nuevo.";
-          setErrors({ api: errorMessage });
-          alert("Error: " + errorMessage);
-        } else {
-          alert("¡Usuario registrado con éxito! ID: " + data.id);
-          closeModal();
-        }
-      } catch (error) {
-        console.error("Error de conexión (CORS o API apagada):", error);
-        setErrors({ api: "No se pudo conectar con el servidor." });
-        alert("Error de conexión. Revisa la consola (F12).");
-      }
-      setIsLoading(false);
-    }
+  const datosParaAPI = {
+    name: formData.nombre,
+    username: formData.nombreUsuario,
+    email: formData.correo,
+    password: formData.contrasena,
+    role: formData.rol,
   };
+
+
+  try {
+    const respuesta = await fetch("http://172.105.21.15:3000/api/users", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(datosParaAPI),
+    });
+
+    const data = await respuesta.json();
+
+    if (!respuesta.ok) {
+      const mensajeError =
+        data.detail ||
+        data.message ||
+        "error al registrar usuario!!";
+
+      setErrors({ api: mensajeError });
+      alert("error: " + mensajeError);
+    } else {
+      alert("Usuario registrado. por favor, inicia sesión!");
+      closeModal();
+    }
+  } catch (error) {
+    setErrors({ api: "Error de conexión con el server" });
+    alert("Ocurrió un error de conexión!")
+  }
+
+  setIsLoading(false);
+};
+
 
   return (
     <div>

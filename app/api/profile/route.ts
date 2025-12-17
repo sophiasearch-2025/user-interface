@@ -8,7 +8,7 @@ const FALLBACK_USER = {
     email: "modo@offline.com",
     role: "Sin conexión a Backend",
     phone: "+56 9 0000 0000",
-    institution: "Modo Local",
+    company: "Modo Local",
     collaborators: [
         { id: 1, name: "Colaborador Demo", email: "demo@test.com" }
     ]
@@ -43,7 +43,7 @@ export async function GET(request: Request) {
       email: userFromDb.email || "",
       role: userFromDb.role || "Usuario",
       phone: userFromDb.phone || "", 
-      institution: userFromDb.institution || "",
+      company: userFromDb.company || "",
       collaborators: userFromDb.collaborators || [], 
     };
 
