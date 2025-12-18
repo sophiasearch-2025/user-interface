@@ -9,19 +9,17 @@ export default function HomeSearchWrapper() {
   const router = useRouter();
 
   const [mediaOptions, setMediaOptions] = useState<string[]>([]);
-  const [categoryOptions, setCategoryOptions] = useState<string[]>([]);
-  const [authorOptions, setAuthorOptions] = useState<string[]>([]);
+  const [countryOptions, setCountryOptions] = useState<string[]>([]);
 
   useEffect(() => {
     const fetchFilters = async () => {
       try {
-        const response = await fetch("/api/filtros");
+        const response = await fetch("/api/filters");
         if (response.ok) {
           const result: FiltersApiResponse = await response.json();
           if (result.success) {
-            setMediaOptions(result.data.media_outlet || []);
-            setCategoryOptions(result.data.categoria || []);
-            setAuthorOptions(result.data.autor || []);
+            setMediaOptions(result.data.media_outlets || []);
+            setCountryOptions(result.data.countries || []);
           }
         }
       } catch (error) {
@@ -37,20 +35,17 @@ export default function HomeSearchWrapper() {
     if (filters.searchTerm) params.set("q", filters.searchTerm);
 
     if (filters.media.length > 0) {
-      filters.media.forEach((m) => params.append("media", m));
+      filters.media.forEach((m) => params.append("media_outlet", m));
     }
-    if (filters.categories.length > 0) {
-      filters.categories.forEach((c) => params.append("category", c));
-    }
-    if (filters.authors.length > 0) {
-      filters.authors.forEach((a) => params.append("autor", a));
+    if (filters.countries.length > 0) {
+      filters.countries.forEach((c) => params.append("country", c));
     }
 
     if (filters.startDate) {
-      params.set("startDate", filters.startDate.toISOString().split("T")[0]);
+      params.set("date_from", filters.startDate.toISOString().split("T")[0]);
     }
     if (filters.endDate) {
-      params.set("endDate", filters.endDate.toISOString().split("T")[0]);
+      params.set("date_to", filters.endDate.toISOString().split("T")[0]);
     }
 
     router.push(`/news?${params.toString()}`);
@@ -65,8 +60,7 @@ export default function HomeSearchWrapper() {
       onApplyFiltersAction={handleApplyFilters}
       onClearFiltersAction={handleClearFilters}
       availableMediaOptions={mediaOptions}
-      availableCategoryOptions={categoryOptions}
-      availableAuthorOptions={authorOptions}
+      availableCountryOptions={countryOptions}
       initialFilters={null}
     />
   );

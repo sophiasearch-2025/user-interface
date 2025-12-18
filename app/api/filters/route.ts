@@ -1,7 +1,7 @@
 // Lo mismo explicato en api/buscar/route.ts
 import { NextResponse } from "next/server";
 
-const FILTROS_BACKEND = "http://172.105.21.15:3000/api/filtros";
+const FILTROS_BACKEND = "http://172.105.21.15:3020/api/filters";
 
 export async function GET() {
   try {
@@ -10,9 +10,9 @@ export async function GET() {
 
     const res = await fetch(FILTROS_BACKEND, {
       cache: "no-store",
-      signal: controller.signal
+      signal: controller.signal,
     });
-    
+
     clearTimeout(timeoutId);
 
     if (!res.ok) {
@@ -22,7 +22,6 @@ export async function GET() {
 
     const data = await res.json();
     return NextResponse.json(data);
-
   } catch (error) {
     console.warn("[API FILTROS] Falló la conexión. Usando filtros vacíos.");
     return returnEmptyFilters();
@@ -30,13 +29,13 @@ export async function GET() {
 }
 
 function returnEmptyFilters() {
-    return NextResponse.json({
-        success: true,
-        data: {
-            media_outlet: [],
-            country: [],
-            categoria: [],
-            autor: []
-        }
-    });
+  return NextResponse.json({
+    success: true,
+    data: {
+      media_outlet: [],
+      country: [],
+      categoria: [],
+      autor: [],
+    },
+  });
 }

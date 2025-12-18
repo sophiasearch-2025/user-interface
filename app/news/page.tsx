@@ -21,11 +21,10 @@ function NewsPageContent() {
     if (searchParams.toString()) {
       return {
         searchTerm: searchParams.get("q") || "",
-        media: searchParams.getAll("media"),
-        categories: searchParams.getAll("category"),
-        authors: searchParams.getAll("autor"),
-        startDate: searchParams.get("startDate") ? new Date(searchParams.get("startDate")!) : null,
-        endDate: searchParams.get("endDate") ? new Date(searchParams.get("endDate")!) : null,
+        media: searchParams.getAll("media_outlet"),
+        countries: searchParams.getAll("country"),
+        startDate: searchParams.get("date_from") ? new Date(searchParams.get("date_from")!) : null,
+        endDate: searchParams.get("date_to") ? new Date(searchParams.get("date_to")!) : null,
       };
     }
     return null;
@@ -36,19 +35,17 @@ function NewsPageContent() {
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
 
   const [mediaOptions, setMediaOptions] = useState<string[]>([]);
-  const [categoryOptions, setCategoryOptions] = useState<string[]>([]);
-  const [authorOptions, setAuthorOptions] = useState<string[]>([]);
+  const [countryOptions, setCountryOptions] = useState<string[]>([]);
 
   useEffect(() => {
     const fetchFilters = async () => {
       try {
-        const response = await fetch("/api/filtros");
+        const response = await fetch("/api/filters");
         if (response.ok) {
           const result: FiltersApiResponse = await response.json();
           if (result.success) {
-            setMediaOptions(result.data.media_outlet || []);
-            setCategoryOptions(result.data.categoria || []);
-            setAuthorOptions(result.data.autor || []);
+            setMediaOptions(result.data.media_outlets || []);
+            setCountryOptions(result.data.countries || []);
           }
         }
       } catch (error) {
@@ -62,26 +59,24 @@ function NewsPageContent() {
     const fetchNews = async () => {
       setIsLoading(true);
       try {
-        const baseUrl = "/api/buscar";
+        const baseUrl = "/api/search";
         const params = new URLSearchParams();
 
         if (activeFilters) {
           if (activeFilters.searchTerm) params.append("q", activeFilters.searchTerm);
-          if (activeFilters.media.length > 0) params.append("medio", activeFilters.media.join(","));
-          if (activeFilters.categories.length > 0) params.append("categoria", activeFilters.categories.join(","));
-          if (activeFilters.authors.length > 0) params.append("autor", activeFilters.authors.join(","));
-          if (activeFilters.startDate)
-            params.append("fechaInicio", activeFilters.startDate.toISOString().split("T")[0]);
-          if (activeFilters.endDate) params.append("fechaFin", activeFilters.endDate.toISOString().split("T")[0]);
+          if (activeFilters.media.length > 0) params.append("media_outlet", activeFilters.media.join(","));
+          if (activeFilters.countries.length > 0) params.append("country", activeFilters.countries.join(","));
+          if (activeFilters.startDate) params.append("date_from", activeFilters.startDate.toISOString().split("T")[0]);
+          if (activeFilters.endDate) params.append("date_to", activeFilters.endDate.toISOString().split("T")[0]);
         }
 
-        params.append("pagina", currentPage.toString());
-        params.append("limite", limit.toString());
+        params.append("page", currentPage.toString());
+        params.append("limit", limit.toString());
 
         const response = await fetch(`${baseUrl}?${params.toString()}`);
         if (!response.ok) {
-            const errorText = await response.text();
-            throw new Error(`Error API: ${response.status} ${response.statusText} - ${errorText}`);
+          const errorText = await response.text();
+          throw new Error(`Error API: ${response.status} ${response.statusText} - ${errorText}`);
         }
 
         const result: ApiResponse = await response.json();
@@ -90,17 +85,16 @@ function NewsPageContent() {
           const mappedData: NewsItem[] = result.data.map((item: ApiNewsItem) => ({
             id: item.id.toString(),
             title: item.title,
-            date: item.fecha || item.date,
+            text: item.text,
+            date: item.date,
             url: item.url,
-            source: item.media_outlet,
+            media_outlet: item.media_outlet,
             country: item.country,
-            author: item.autor || "N/A",
-            category: item.categoria || "General",
           }));
 
           setFilteredNews(mappedData);
-          setTotalPages(result.paginacion.totalPaginas);
-          setTotalResults(result.paginacion.total);
+          setTotalPages(result.pagination.total_pages);
+          setTotalResults(result.pagination.total);
         } else {
           setFilteredNews([]);
           setTotalResults(0);
@@ -149,8 +143,7 @@ function NewsPageContent() {
             onApplyFiltersAction={handleApplyFilters}
             onClearFiltersAction={handleClearFilters}
             availableMediaOptions={mediaOptions}
-            availableCategoryOptions={categoryOptions}
-            availableAuthorOptions={authorOptions}
+            availableCountryOptions={countryOptions}
             initialFilters={activeFilters}
           />
           <ExportSelectedButton selectedIds={selectedIds} />

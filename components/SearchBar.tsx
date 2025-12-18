@@ -10,8 +10,7 @@ type SearchProps = {
   onApplyFiltersAction: (filters: NewsFilterState) => void;
   onClearFiltersAction: () => void;
   availableMediaOptions: string[];
-  availableCategoryOptions: string[];
-  availableAuthorOptions: string[];
+  availableCountryOptions: string[];
   initialFilters: NewsFilterState | null;
 };
 
@@ -19,16 +18,14 @@ export default function Search({
   onApplyFiltersAction: onApplyFilters,
   onClearFiltersAction: onClearFilters,
   availableMediaOptions,
-  availableCategoryOptions,
-  availableAuthorOptions,
+  availableCountryOptions,
   initialFilters,
 }: SearchProps) {
   const [isFilterOpen, setIsFilterOpen] = useState(false);
 
   const [searchTerm, setSearchTerm] = useState(initialFilters?.searchTerm || "");
   const [selectedMedia, setSelectedMedia] = useState<string[]>(initialFilters?.media || []);
-  const [selectedCategories, setSelectedCategories] = useState<string[]>(initialFilters?.categories || []);
-  const [selectedAuthors, setSelectedAuthors] = useState<string[]>(initialFilters?.authors || []);
+  const [selectedCountries, setSelectedCountries] = useState<string[]>(initialFilters?.countries || []);
   const [selectedStartDate, setSelectedStartDate] = useState<Date | null>(initialFilters?.startDate || null);
   const [selectedEndDate, setSelectedEndDate] = useState<Date | null>(initialFilters?.endDate || null);
 
@@ -36,8 +33,7 @@ export default function Search({
     if (initialFilters) {
       setSearchTerm(initialFilters.searchTerm);
       setSelectedMedia(initialFilters.media);
-      setSelectedCategories(initialFilters.categories);
-      setSelectedAuthors(initialFilters.authors);
+      setSelectedCountries(initialFilters.countries);
       setSelectedStartDate(initialFilters.startDate);
       setSelectedEndDate(initialFilters.endDate);
     }
@@ -46,8 +42,7 @@ export default function Search({
   const handleClearFilters = () => {
     setSearchTerm("");
     setSelectedMedia([]);
-    setSelectedCategories([]);
-    setSelectedAuthors([]);
+    setSelectedCountries([]);
     setSelectedStartDate(null);
     setSelectedEndDate(null);
     onClearFilters();
@@ -59,8 +54,7 @@ export default function Search({
       startDate: selectedStartDate,
       endDate: selectedEndDate,
       media: selectedMedia,
-      categories: selectedCategories,
-      authors: selectedAuthors,
+      countries: selectedCountries,
     });
     setIsFilterOpen(false);
   };
@@ -150,19 +144,11 @@ export default function Search({
             />
 
             <TagSelector
-              label="Categoría:"
-              buttonText="Añadir categoría"
-              availableOptions={availableCategoryOptions}
-              selectedItems={selectedCategories}
-              onChangeAction={setSelectedCategories}
-            />
-
-            <TagSelector
-              label="Autor:"
-              buttonText="Añadir autor"
-              availableOptions={availableAuthorOptions}
-              selectedItems={selectedAuthors}
-              onChangeAction={setSelectedAuthors}
+              label="País:"
+              buttonText="Añadir país"
+              availableOptions={availableCountryOptions}
+              selectedItems={selectedCountries}
+              onChangeAction={setSelectedCountries}
             />
 
             <div className="flex justify-end gap-x-3 mt-4 border-t border-surface-light/20 pt-4">

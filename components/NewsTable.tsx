@@ -38,12 +38,6 @@ export default function NewsTable({ news, selectedIds, onToggleSelect, onToggleS
               País
             </th>
             <th scope="col" className="py-3.5 px-3 text-left text-sm font-semibold text-text-primary">
-              Autor
-            </th>
-            <th scope="col" className="py-3.5 px-3 text-left text-sm font-semibold text-text-primary">
-              Categoría
-            </th>
-            <th scope="col" className="py-3.5 px-3 text-left text-sm font-semibold text-text-primary">
               URL
             </th>
             <th scope="col" className="relative py-3.5 px-3">
@@ -76,10 +70,8 @@ export default function NewsTable({ news, selectedIds, onToggleSelect, onToggleS
               <td className="whitespace-nowrap py-4 px-3 text-sm text-text-muted">
                 {new Date(item.date).toLocaleDateString("es-CL")}
               </td>
-              <td className="whitespace-nowrap py-4 px-3 text-sm text-text-muted">{item.source}</td>
+              <td className="whitespace-nowrap py-4 px-3 text-sm text-text-muted">{item.media_outlet}</td>
               <td className="whitespace-nowrap py-4 px-3 text-sm text-text-muted capitalize">{item.country}</td>
-              <td className="whitespace-nowrap py-4 px-3 text-sm text-text-muted">{item.author}</td>
-              <td className="whitespace-nowrap py-4 px-3 text-sm text-text-muted capitalize">{item.category}</td>
               <td className="whitespace-nowrap py-4 px-3 text-sm text-link-active">
                 <a href={item.url} target="_blank" rel="noopener noreferrer" className="hover:underline">
                   Ver Link
