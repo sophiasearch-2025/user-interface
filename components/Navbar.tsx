@@ -1,4 +1,4 @@
-"use client"
+"use client";
 
 import Image from "next/image";
 import UserProfileMenu from "./UserProfileMenu";
@@ -35,7 +35,6 @@ export default function Navbar() {
       window.removeEventListener("storage", leerUsuario);
       window.removeEventListener("auth-change", leerUsuario);
     };
-    
   }, []);
 
   return (
@@ -53,9 +52,10 @@ export default function Navbar() {
             />
           </Link>
 
-          <Link href="/news">
+          {/* Usamos <a> en vez de <Link> para que se recargue al presionar */}
+          <a href="/news">
             <button className="font-bold text-link-active hover:text-link-hover transition-colors">Catálogo</button>
-          </Link>
+          </a>
           <Link href="/plans">
             <button className="font-bold text-link-active hover:text-link-hover transition-colors">Planes</button>
           </Link>
@@ -63,7 +63,7 @@ export default function Navbar() {
         {isCheckingAuth ? (
           <div className="w-[100px] h-10" />
         ) : usuario ? (
-           <UserProfileMenu name={usuario.name} photoURL={usuario.photoURL} />
+          <UserProfileMenu name={usuario.name} photoURL={usuario.photoURL} />
         ) : (
           <AuthButtons showRegister={true} showLogin={true} />
         )}

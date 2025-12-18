@@ -2,7 +2,6 @@
 
 import { useState, useEffect, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
-import ContentHeader from "@/components/ContentHeader";
 import Pagination from "@/components/Pagination";
 import NewsTable from "@/components/NewsTable";
 import ExportSelectedButton from "@/components/ExportSelectedButton";
@@ -136,42 +135,54 @@ function NewsPageContent() {
   };
 
   return (
-    <div className="w-full mx-auto py-8">
-      <ContentHeader firstLine="Catálogo" secondLine="de noticias">
-        <div className="flex w-full max-w-7xl">
-          <SearchBar
-            onApplyFiltersAction={handleApplyFilters}
-            onClearFiltersAction={handleClearFilters}
-            availableMediaOptions={mediaOptions}
-            availableCountryOptions={countryOptions}
-            initialFilters={activeFilters}
-          />
-          <ExportSelectedButton selectedIds={selectedIds} />
+    <div className="flex flex-col gap-10 justify-center items-center w-full mx-auto py-8">
+      <div className="flex flex-col gap-5 justify-center items-center w-full">
+        <div className="flex w-full justify-between items-center">
+          <div className="w-40 h-5 bg-surface-accent"></div>
+          <h1 className="tracking-widest text-6xl font-bold">Catálogo de noticias</h1>
+          <div className="w-40 h-5 bg-surface-accent"></div>
         </div>
 
-        <div className="flex items-center gap-3 px-8">
-          <p className="text-sm text-text-muted">Mostrar por página:</p>
-          <select
-            className="bg-surface-dark border border-border-primary rounded-md p-1 text-sm text-foreground focus:outline-none focus:border-border-primary"
-            value={limit}
-            onChange={(e) => {
-              setLimit(Number(e.target.value));
-              setCurrentPage(1);
-            }}
-          >
-            <option value="10">10</option>
-            <option value="50">50</option>
-            <option value="100">100</option>
-            <option value="200">200</option>
-          </select>
-        </div>
-      </ContentHeader>
+        {totalResults !== undefined && (
+          <div className="flex w-full justify-center text-xl font-medium mb-1 ml-2">
+            {activeFilters?.searchTerm?.trim() ? (
+              <>
+                <span>Encontrados {totalResults} resultados para</span>
+                <span className="text-text-accent ml-2">&quot;{activeFilters.searchTerm}&quot;</span>
+              </>
+            ) : (
+              <span>Explota, filtra y analiza fuentes relevantes para tu investigación.</span>
+            )}
+          </div>
+        )}
 
-      {totalResults !== undefined && (
-        <div className="flex w-full justify-center">
-          <span className="text-lg text-text-muted font-medium mb-1 ml-2">({totalResults} resultados)</span>
+        <SearchBar
+          onApplyFiltersAction={handleApplyFilters}
+          onClearFiltersAction={handleClearFilters}
+          availableMediaOptions={mediaOptions}
+          availableCountryOptions={countryOptions}
+          initialFilters={activeFilters}
+        />
+
+        <div className="flex">
+          <div className="flex items-center gap-x-3 px-8">
+            <p className="text-sm text-text-muted">Mostrar por página:</p>
+            <select
+              className="bg-surface-dark border border-border-primary rounded-md p-1 text-sm text-foreground focus:outline-none focus:border-border-primary"
+              value={limit}
+              onChange={(e) => {
+                setLimit(Number(e.target.value));
+                setCurrentPage(1);
+              }}
+            >
+              <option value="10">10</option>
+              <option value="50">50</option>
+              <option value="100">100</option>
+              <option value="200">200</option>
+            </select>
+          </div>
         </div>
-      )}
+      </div>
 
       {isLoading ? (
         <div className="text-center py-20 text-text-muted">Cargando noticias...</div>
