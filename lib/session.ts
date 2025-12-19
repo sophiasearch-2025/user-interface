@@ -12,10 +12,3 @@ export async function isAuthenticated() {
   const user = await fetchUserData();
   return !!user;
 }
-
-
-
-
-
-
-
